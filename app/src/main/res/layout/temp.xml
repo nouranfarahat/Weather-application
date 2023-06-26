@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginRight="10dp"
+
+
+    android:layout_width="100dp"
+    android:layout_height="200dp"
+    android:backgroundTint="#82C1E1"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="3dp"
+    app:layout_constraintDimensionRatio="1:2"
+    tools:ignore="MissingConstraints">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_margin="10dp"
+        android:text="4 AM"
+        android:textSize="10sp" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/sunny"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:layout_margin="10dp"
+        android:text="32 °C"
+        android:textSize="10sp"
+        android:textStyle="bold" />
+
+
+</androidx.cardview.widget.CardView>
+

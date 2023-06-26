@@ -4,5 +4,5 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 
 interface RemoteSource {
-    suspend fun getAllProductFromNetwork(): Flow<Gson>
+    suspend fun getWeatherFromNetwork(): Flow<Gson>
 }

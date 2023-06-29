@@ -9,32 +9,35 @@
     android:layout_width="100dp"
     android:layout_height="200dp"
     android:backgroundTint="#82C1E1"
-    app:cardCornerRadius="30dp"
+    app:cardCornerRadius="40dp"
     app:cardElevation="3dp"
     app:layout_constraintDimensionRatio="1:2"
     tools:ignore="MissingConstraints">
 
     <TextView
+        android:id="@+id/time_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|top"
         android:layout_margin="10dp"
         android:text="4 AM"
-        android:textSize="10sp" />
+        android:textSize="15sp" />
 
     <ImageView
+        android:id="@+id/hour_weather_icon_iv"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/sunny"
         android:layout_gravity="center"/>
 
     <TextView
+        android:id="@+id/temp_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
         android:layout_margin="10dp"
         android:text="32 °C"
-        android:textSize="10sp"
+        android:textSize="15sp"
         android:textStyle="bold" />
 
 

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.flow
 
 class WeatherClient:RemoteSource {
 
-        val productService: WeatherService by lazy {
+        val weatherService: WeatherService by lazy {
             RetrofitHelper.retrofitInstance.create(WeatherService::class.java)
         }
     companion object
@@ -22,10 +22,16 @@ class WeatherClient:RemoteSource {
 
     }
 
-
-    override suspend fun getWeatherFromNetwork(): Flow<Gson> = flow {
-        val productList= productService.getWeatherInfo().body()?:" "
-        emit(productList as Gson)
+    override suspend fun getWeatherFromNetwork(
+        latitude: Double,
+        longtude: Double,
+        language: String,
+        unit: String
+    ): Flow<WeatherResponse> = flow{
+        val currentWeather=weatherService.getWeatherInfo(latitude,longtude, language, unit).body()
+        if (currentWeather != null) {
+            emit(currentWeather)
+        }
     }
 
 

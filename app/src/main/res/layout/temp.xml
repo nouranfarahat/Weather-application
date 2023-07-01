@@ -9,7 +9,7 @@
     android:layout_width="100dp"
     android:layout_height="200dp"
     android:backgroundTint="#82C1E1"
-    app:cardCornerRadius="40dp"
+    app:cardCornerRadius="50dp"
     app:cardElevation="3dp"
     app:layout_constraintDimensionRatio="1:2"
     tools:ignore="MissingConstraints">

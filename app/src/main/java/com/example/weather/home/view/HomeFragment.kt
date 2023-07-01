@@ -1,14 +1,12 @@
 package com.example.weather.home.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -19,20 +17,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.mvvm.allproducts.viewmodel.HomeViewModel
 import com.example.mvvm.allproducts.viewmodel.HomeViewModelFactory
-import com.example.weather.BuildConfig
 import com.example.weather.R
 import com.example.weather.databinding.FragmentHomeBinding
 import com.example.weather.model.Repository
 import com.example.weather.network.WeatherClient
-import com.example.weather.utilities.ApiState
-import com.example.weather.utilities.Constants
-import com.example.weather.utilities.getDate
+import com.example.weather.utilities.*
 import com.google.android.gms.location.*
 import kotlinx.coroutines.launch
 import java.util.*
@@ -44,6 +38,8 @@ class HomeFragment : Fragment() {
     lateinit var viewModel: HomeViewModel
     lateinit var homeViewModelFactory: HomeViewModelFactory
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    lateinit var hourlyAdapter: HourlyAdapter
+    lateinit var dailyAdapter: DailyAdapter
 
     var lat: Double = 1.0
     var longt: Double = 1.0
@@ -63,14 +59,6 @@ class HomeFragment : Fragment() {
         Log.i("TAG", "onCreateView: ")
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        //longt = arguments?.getDouble("LONG")!!
-        //lat = arguments?.getDouble("LAT")!!
-//        val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
-//        longt = sharedPref.getFloat("LONG", 0.0F).toDouble()
-//        lat = sharedPref.getFloat("LAT", 0.0F).toDouble()
-//        println("cdfvgbhjgfdfvghj $longt ,hghgyhg $lat")
-
-
         return binding.root
     }
 
@@ -84,6 +72,8 @@ class HomeFragment : Fragment() {
             )
         )
         viewModel = ViewModelProvider(this, homeViewModelFactory).get(HomeViewModel::class.java)
+        hourlyAdapter= HourlyAdapter()
+        dailyAdapter= DailyAdapter()
         getLastLocation()
     }
 
@@ -99,30 +89,55 @@ class HomeFragment : Fragment() {
             viewModel.weatherResponse.collect { result ->
                 when (result) {
                     is ApiState.Success -> {
+                        Log.i("TAG", "Success before: lat=$lat , long=$longt ")
+                        val currentWeather=result.data.current
+
                         binding.progressBar.visibility = View.GONE
                         binding.mainTempCard.visibility = View.VISIBLE
                         binding.cityTv.text = result.data.timezone
-                        binding.dateTv.text= getDate(result.data.current.dt)
-                        val iconStr=Constants.ICON_URL+result.data.current.weather.get(0).icon+".png"
+                        binding.dateTv.text= getDate(currentWeather.dt)
+                        binding.mainTempTv.text = tempFormat(currentWeather.temp,Changables.unitDegree)
+                        val iconStr=Constants.ICON_URL+currentWeather.weather.get(0).icon+".png"
                         Glide.with(binding.mainIconIv.context)
                             .load(iconStr)
                             .placeholder(R.drawable.ic_launcher_background)
                             .error(R.drawable.ic_launcher_foreground)
                             .into(binding.mainIconIv)
-                        binding.descriptionTv.text=result.data.current.weather.get(0).description
-                        Log.i("TAG", "Success: lat=$lat , long=$longt ")
+                        binding.descriptionTv.text=currentWeather.weather.get(0).description
 
+                        hourlyAdapter.submitList(result.data.hourly)
+                        binding.hourlyRv.apply {
+                            adapter=hourlyAdapter
+                            setHasFixedSize(true)
+                        }
+
+                        dailyAdapter.submitList(result.data.daily)
+                        binding.daysRv.apply {
+                            adapter=dailyAdapter
+                            setHasFixedSize(true)
+                        }
+                        Log.i("TAG", "Success: lat=$lat , long=$longt ")
+                        binding.weatherDetailsCard.visibility=View.VISIBLE
+                        binding.humidityValueTv.text= setHumidity(currentWeather.humidity)
+                        binding.visibilityValueTv.text= setVisibility(currentWeather.visibility)
+                        binding.windValueTv.text= setWind(currentWeather.wind_speed,Changables.unitDegree)
+                        binding.pressureValueTv.text= setPressure(currentWeather.pressure)
+                        binding.cloudValueTv.text= setClouds(currentWeather.clouds)
+                        binding.uvValueTv.text=currentWeather.uvi.toString()
 
                     }
                     is ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
                         binding.mainTempCard.visibility = View.GONE
+                        binding.weatherDetailsCard.visibility=View.GONE
+
                         Log.i("TAG", "Loading: lat=$lat , long=$longt ")
 
                     }
 
                     is ApiState.Failure -> {
                         binding.progressBar.visibility = View.GONE
+                        binding.weatherDetailsCard.visibility=View.GONE
                         Log.i("TAG", "Failure: lat=$lat , long=$longt ${result.msg.message}")
 
                         Toast.makeText(context, result.msg.message, Toast.LENGTH_SHORT).show()
@@ -134,52 +149,13 @@ class HomeFragment : Fragment() {
 
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        Log.i("TAG", "onResume: fragment ")
-////        val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
-////        longt = sharedPref.getFloat("LONG", 0.0F).toDouble()
-////        lat = sharedPref.getFloat("LAT", 0.0F).toDouble()
-////        println("cdfvgbhjgfdfvghj $longt ,hghgyhg $lat")
-//        lifecycleScope.launch {
-////            val longt = arguments?.getDouble("LONG")
-////            val lat = arguments?.getDouble("LAT")
-//            //var lat: Double = 33.44
-//            //var longt: Double = -94.04
-//            println("cdfvgbhjgfdfvghj $longt ,hghgyhg $lat found")
-//
-//            viewModel.getLocationWeather(lat, longt,"en","standard")
-//            viewModel.weatherResponse.collect { result ->
-//                when (result) {
-//                    is ApiState.Success -> {
-//                        binding.progressBar.visibility = View.GONE
-//                        binding.mainTempCard.visibility = View.VISIBLE
-//                        binding.cityTv.text = result.data.timezone
-//
-//                    }
-//                    is ApiState.Loading -> {
-//                        binding.progressBar.visibility = View.VISIBLE
-//                        //binding.mainTempCard.visibility = View.GONE
-//                    }
-//
-//                    else -> {
-//                        binding.progressBar.visibility = View.GONE
-//                        Toast.makeText(context, "Check your Connection", Toast.LENGTH_SHORT).show()
-//
-//                    }
-//                }
-//            }
-//        }
-//
-//
-//    }
-
     private val locationCallBack: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val lastLocation: Location = locationResult.lastLocation
             lat = lastLocation.latitude
             longt = lastLocation.longitude
-            viewModel.getLocationWeather(lat, longt)
+            //Constants.UnitDegree.unitDegree="standard"
+            viewModel.getLocationWeather(lat, longt,unit=Changables.unitDegree)
 
             Log.i("TAG", "Callback: lat=$lat , long=$longt ")
 

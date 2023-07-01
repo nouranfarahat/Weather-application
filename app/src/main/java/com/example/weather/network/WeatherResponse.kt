@@ -32,17 +32,17 @@ data class Current (
 )
 data class Hourly (
 
-    val dt : Int,
+    val dt : Long,
     val temp : Double,
     val feels_like : Double,
-    val pressure : Int,
-    val humidity : Int,
+    val pressure : Long,
+    val humidity : Long,
     val dew_point : Double,
     val uvi : Double,
-    val clouds : Int,
-    val visibility : Int,
+    val clouds : Long,
+    val visibility : Long,
     val wind_speed : Double,
-    val wind_deg : Int,
+    val wind_deg : Long,
     val wind_gust : Double,
     val weather : List<Weather>,
     val pop : Double

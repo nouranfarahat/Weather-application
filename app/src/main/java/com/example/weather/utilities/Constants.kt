@@ -7,4 +7,6 @@ object Constants {
     const val ICON_URL="https://openweathermap.org/img/wn/"
     const val PERMISSION_ID = 5005
 
+
+
 }

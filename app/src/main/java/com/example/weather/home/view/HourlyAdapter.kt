@@ -1,6 +1,7 @@
 package com.example.weather.home.view
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -11,9 +12,9 @@ import com.example.weather.R
 import com.example.weather.databinding.HourlyForcastCardBinding
 import com.example.weather.databinding.TempBinding
 import com.example.weather.network.Hourly
-import com.example.weather.utilities.Constants
+import com.example.weather.utilities.*
 
-class HourlyAdapter() :ListAdapter<Hourly, HourlyAdapter.ViewHolder>(ProductDiffUtil()) {
+class HourlyAdapter() :ListAdapter<Hourly, HourlyAdapter.ViewHolder>(HourlyWeatherDiffUtil()) {
     lateinit var binding:TempBinding
     class ViewHolder(var binding: TempBinding):RecyclerView.ViewHolder(binding.root)
 
@@ -24,11 +25,13 @@ class HourlyAdapter() :ListAdapter<Hourly, HourlyAdapter.ViewHolder>(ProductDiff
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentProduct=getItem(position)
-        holder.binding.timeTv.text=currentProduct.dt.toString()
-        holder.binding.tempTv.text=currentProduct.temp.toString()
+        val currentHour=getItem(position)
+        Log.i("TAG", "In adapter: ")
+
+        holder.binding.timeTv.text= getTime( currentHour.dt)
+        holder.binding.tempTv.text= tempFormat( currentHour.temp, Changables.unitDegree)
         Glide.with(holder.binding.hourWeatherIconIv.context)
-            .load(Constants.ICON_URL+currentProduct.weather.get(0).icon)
+            .load(Constants.ICON_URL+currentHour.weather.get(0).icon+".png")
             .placeholder(R.drawable.ic_launcher_background)
             .error(R.drawable.ic_launcher_foreground)
             .into(holder.binding.hourWeatherIconIv)
@@ -43,7 +46,7 @@ class HourlyAdapter() :ListAdapter<Hourly, HourlyAdapter.ViewHolder>(ProductDiff
 }
 
 
-class ProductDiffUtil:DiffUtil.ItemCallback<Hourly>()
+class HourlyWeatherDiffUtil:DiffUtil.ItemCallback<Hourly>()
 {
     override fun areItemsTheSame(oldItem: Hourly, newItem: Hourly): Boolean {
         return oldItem.dt==newItem.dt

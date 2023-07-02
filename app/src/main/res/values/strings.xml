@@ -10,4 +10,8 @@
     <string name="pressure">Pressure</string>
     <string name="cloud">Cloud</string>
     <string name="wind">Wind</string>
+    <string name="english">English</string>
+    <string name="celsius">Celsius</string>
+    <string name="fehrenheit">Fehrenheit</string>
+    <string name="kelvin">Kelvin</string>
 </resources>

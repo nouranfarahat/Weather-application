@@ -1,8 +1,10 @@
 package com.example.weather.model
 
+import android.view.translation.TranslationResponse
 import androidx.lifecycle.LiveData
 import com.example.weather.network.Current
 import com.example.weather.network.WeatherResponse
+import com.example.weather.network.translation.RemoteTranslateSource
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 
@@ -12,4 +14,6 @@ interface RepositoryInterface {
                                    longtude:Double,
                                    language:String="en",
                                    unit:String="standard"): Flow<WeatherResponse>
+    suspend fun getTranslatedText(text: String): Flow<TranslationResponse>
+
 }

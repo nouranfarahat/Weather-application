@@ -27,9 +27,16 @@ class HourlyAdapter() :ListAdapter<Hourly, HourlyAdapter.ViewHolder>(HourlyWeath
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentHour=getItem(position)
         Log.i("TAG", "In adapter: ")
-
-        holder.binding.timeTv.text= getTime( currentHour.dt)
-        holder.binding.tempTv.text= tempFormat( currentHour.temp, Changables.unitDegree)
+        translateString(getTime( currentHour.dt), "en", "ar") { translatedText, exception ->
+            if (exception != null) {
+                Log.e("Translation", "Translation failed: ${exception.message}")
+            } else {
+                holder.binding.timeTv.text= translatedText
+                Log.d("Translation", "Translated text: $translatedText")
+            }
+        }
+        //holder.binding.timeTv.text= translateString(getTime( currentHour.dt),Constants.ENGLISH,Constants.ARABIC)
+        holder.binding.tempTv.text= tempFormat( currentHour.temp, Changables.temperatureUnit)
         Glide.with(holder.binding.hourWeatherIconIv.context)
             .load(Constants.ICON_URL+currentHour.weather.get(0).icon+".png")
             .placeholder(R.drawable.ic_launcher_background)

@@ -2,7 +2,9 @@ package com.example.weather.home.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -11,12 +13,12 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -26,8 +28,10 @@ import com.example.weather.R
 import com.example.weather.databinding.FragmentHomeBinding
 import com.example.weather.model.Repository
 import com.example.weather.network.WeatherClient
+import com.example.weather.network.translation.TranslateClient
 import com.example.weather.utilities.*
 import com.google.android.gms.location.*
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -40,6 +44,7 @@ class HomeFragment : Fragment() {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var hourlyAdapter: HourlyAdapter
     lateinit var dailyAdapter: DailyAdapter
+    lateinit var sharedPreferences: SharedPreferences
 
     var lat: Double = 1.0
     var longt: Double = 1.0
@@ -47,6 +52,8 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i("TAG", "onCreate: ")
+        sharedPreferences= requireActivity().getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
     }
@@ -57,7 +64,6 @@ class HomeFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         Log.i("TAG", "onCreateView: ")
-
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -68,7 +74,7 @@ class HomeFragment : Fragment() {
         //getLastLocation()
         homeViewModelFactory = HomeViewModelFactory(
             Repository.getInstance(
-                WeatherClient.getInstance()
+                WeatherClient.getInstance(),TranslateClient.getInstance()
             )
         )
         viewModel = ViewModelProvider(this, homeViewModelFactory).get(HomeViewModel::class.java)
@@ -94,9 +100,22 @@ class HomeFragment : Fragment() {
 
                         binding.progressBar.visibility = View.GONE
                         binding.mainTempCard.visibility = View.VISIBLE
-                        binding.cityTv.text = result.data.timezone
+                        val countryName=result.data.timezone.substringAfter('/')
+
+//                        lifecycleScope.launch {
+//                            binding.cityTv.text = view?.let { translateText(it.context,countryName) }
+//                        }
+                        translateString(countryName, "en", "ar") { translatedText, exception ->
+                            if (exception != null) {
+                                Log.e("Translation", "Translation failed: ${exception.message}")
+                            } else {
+                                binding.cityTv.text=translatedText
+                                Log.d("Translation", "Translated text: $translatedText")
+                            }
+                        }
+                        //binding.cityTv.text= translateText(countryName,Constants.ENGLISH,Constants.ARABIC)
                         binding.dateTv.text= getDate(currentWeather.dt)
-                        binding.mainTempTv.text = tempFormat(currentWeather.temp,Changables.unitDegree)
+                        binding.mainTempTv.text = tempFormat(currentWeather.temp,Changables.temperatureUnit)
                         val iconStr=Constants.ICON_URL+currentWeather.weather.get(0).icon+".png"
                         Glide.with(binding.mainIconIv.context)
                             .load(iconStr)
@@ -119,12 +138,28 @@ class HomeFragment : Fragment() {
                         Log.i("TAG", "Success: lat=$lat , long=$longt ")
                         binding.weatherDetailsCard.visibility=View.VISIBLE
                         binding.humidityValueTv.text= setHumidity(currentWeather.humidity)
-                        binding.visibilityValueTv.text= setVisibility(currentWeather.visibility)
-                        binding.windValueTv.text= setWind(currentWeather.wind_speed,Changables.unitDegree)
-                        binding.pressureValueTv.text= setPressure(currentWeather.pressure)
+                        binding.visibilityValueTv.text= setVisibility(currentWeather.visibility,binding.visibilityValueTv.context)
+                        binding.windValueTv.text= setWind(currentWeather.wind_speed,Changables.windSpeedUnit,binding.windValueTv.context)
+                        binding.pressureValueTv.text= setPressure(currentWeather.pressure,binding.pressureValueTv.context)
                         binding.cloudValueTv.text= setClouds(currentWeather.clouds)
                         binding.uvValueTv.text=currentWeather.uvi.toString()
 
+                        //viewModel.translateText(countryName)
+                        /*viewModel.translationResponse
+                            .collect { data ->
+                                when (data) {
+                                    is TranslateState.Success -> {
+                                        binding.cityTv.text = data
+                                    }
+                                    is TranslateState.Failure -> {
+                                        Toast.makeText(context, data.msg.message, Toast.LENGTH_SHORT).show()
+                                    }
+                                    is TranslateState.Loading->{
+                                        Log.i("TAG", "Loading:")
+
+                                    }
+                                }
+                            }*/
                     }
                     is ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -155,7 +190,7 @@ class HomeFragment : Fragment() {
             lat = lastLocation.latitude
             longt = lastLocation.longitude
             //Constants.UnitDegree.unitDegree="standard"
-            viewModel.getLocationWeather(lat, longt,unit=Changables.unitDegree)
+            viewModel.getLocationWeather(lat, longt,Changables.language,Changables.temperatureUnit)
 
             Log.i("TAG", "Callback: lat=$lat , long=$longt ")
 
@@ -258,11 +293,12 @@ class HomeFragment : Fragment() {
 
         return addresses?.get(0)?.getAddressLine(0) ?: "not found"
     }
-    private fun showSnackbar(mainTextStringId: String, actionStringId: Int,
-                             listener: View.OnClickListener) {
+    private fun showSnackbar(view: View,msgStr:String) {
 
-        Toast.makeText(context, mainTextStringId, Toast.LENGTH_LONG).show()
+        Snackbar.make(view,msgStr,Snackbar.ANIMATION_MODE_FADE).show()
     }
+
+
 
 
 

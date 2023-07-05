@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weather.model.RepositoryInterface
 import com.example.weather.utilities.ApiState
+import com.example.weather.utilities.TranslateState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,10 @@ class HomeViewModel(private val repo: RepositoryInterface) : ViewModel() {
     private val mutableWeather : MutableStateFlow<ApiState> = MutableStateFlow(ApiState.Loading)
     val weatherResponse: StateFlow<ApiState>
         get() = mutableWeather
+
+    private val mutableTranslation : MutableStateFlow<TranslateState> = MutableStateFlow(TranslateState.Loading)
+    val translationResponse: StateFlow<TranslateState>
+        get() = mutableTranslation
 
     /*init {
         getLocationWeather() //law m3mltsh de w kant getLocalProduct public hnadyha bs fe el activity?
@@ -33,6 +38,20 @@ class HomeViewModel(private val repo: RepositoryInterface) : ViewModel() {
             .collect{
                     data-> mutableWeather.value=ApiState.Success(data)
                 Log.i("TAG", "getLocationWeather: Collect")
+
+            } //hal hwa hyrg3 lw7do ll default Dispatcher b3d ma y5ls?
+    }
+
+    fun translateText(text:String)= viewModelScope.launch {
+
+        repo.getTranslatedText(text)
+            .catch {
+                    e-> mutableTranslation.value=TranslateState.Failure(e)
+                Log.i("TAG", "getTranslation: Catch")
+            }
+            .collect{
+                    data-> mutableTranslation.value=TranslateState.Success(data)
+                Log.i("TAG", "getTranslation: Collect")
 
             } //hal hwa hyrg3 lw7do ll default Dispatcher b3d ma y5ls?
     }

@@ -111,7 +111,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/days_rv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -132,7 +132,7 @@
                     android:layout_height="0dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
+                    android:layout_margin="5dp"
                     android:backgroundTint="@color/purple_700"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
@@ -177,7 +177,7 @@
                     android:layout_height="0dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
+                    android:layout_margin="5dp"
                     android:backgroundTint="@color/purple_700"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
@@ -199,7 +199,7 @@
                             android:id="@+id/uv_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ultra Violet"
+                            android:text="@string/ultra_violet"
                             android:textAlignment="center"
                             android:textSize="20sp" />
 
@@ -220,7 +220,7 @@
                     android:layout_height="0dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
+                    android:layout_margin="5dp"
                     android:backgroundTint="@color/purple_700"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
@@ -263,7 +263,7 @@
                     android:layout_height="0dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
+                    android:layout_margin="5dp"
                     android:backgroundTint="@color/purple_700"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
@@ -306,7 +306,7 @@
                     android:layout_height="0dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
+                    android:layout_margin="5dp"
                     android:backgroundTint="@color/purple_700"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
@@ -337,7 +337,7 @@
                             android:id="@+id/pressure_value_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1021 hpa"
+                            android:text="@string/hpa"
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -350,7 +350,7 @@
                     android:layout_height="0dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
-                    android:layout_margin="8dp"
+                    android:layout_margin="5dp"
                     android:backgroundTint="@color/purple_700"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
@@ -381,7 +381,7 @@
                             android:id="@+id/visibility_value_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="6000 m"
+                            android:text="@string/m"
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />

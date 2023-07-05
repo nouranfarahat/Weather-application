@@ -6,7 +6,7 @@
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_baseline_home_24"
-        android:title="Home" />
+        android:title="@string/home" />
     <item
         android:id="@+id/alertFragment"
         android:icon="@drawable/notification"

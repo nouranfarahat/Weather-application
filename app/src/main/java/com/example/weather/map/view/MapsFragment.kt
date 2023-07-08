@@ -1,21 +1,43 @@
 package com.example.weather.map.view
 
-import androidx.fragment.app.Fragment
-
+import android.content.Context
+import android.content.SharedPreferences
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.weather.R
-
+import com.example.weather.databinding.FragmentMapsBinding
+import com.example.weather.home.view.HomeFragmentDirections
+import com.example.weather.utilities.Constants
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import java.util.*
 
 class MapsFragment : Fragment() {
+
+    lateinit var binding: FragmentMapsBinding
+    lateinit var sharedPreferences: SharedPreferences
+    lateinit var editor: SharedPreferences.Editor
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+    private var previousMarker: Marker? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedPreferences = requireActivity().getSharedPreferences(
+            Constants.SHARED_PREFERENCE_NAME,
+            Context.MODE_PRIVATE
+        )
+        editor = sharedPreferences.edit()
+    }
 
     private val callback = OnMapReadyCallback { googleMap ->
         /**
@@ -27,9 +49,26 @@ class MapsFragment : Fragment() {
          * install it inside the SupportMapFragment. This method will only be triggered once the
          * user has installed Google Play services and returned to the app.
          */
-        val sydney = LatLng(-34.0, 151.0)
+        /*val sydney = LatLng(-34.0, 151.0)
         googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))*/
+
+        googleMap.setOnMapClickListener { latlng ->
+            previousMarker?.remove()
+            val location = LatLng(latlng.latitude, latlng.longitude)
+            longitude = latlng.longitude
+            latitude = latlng.latitude
+            editor.putFloat(Constants.LATITUDE, latitude.toFloat()).apply()
+            editor.putFloat(Constants.LONGITUDE, longitude.toFloat()).apply()
+            //previousMarker?.remove()
+            previousMarker = googleMap.addMarker(MarkerOptions().position(location))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
+
+            binding.mapCountry.text = getAddress(latitude, longitude).first
+            binding.mapCity.text = getAddress(latitude, longitude).second
+
+            //passLocation()
+        }
     }
 
     override fun onCreateView(
@@ -37,12 +76,40 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+        binding = FragmentMapsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+
+        binding.mapOkBtn.setOnClickListener {
+            val fragmentName =
+                sharedPreferences.getString(Constants.FRAGMENT_NAME, Constants.HOME_FRAGMENT)
+                    .toString()
+
+            if (fragmentName.equals(Constants.HOME_FRAGMENT)) {
+                val action = MapsFragmentDirections.actionMapsFragmentToHomeFragment()
+                findNavController().navigate(action)
+            }
+        }
+
+    }
+
+    private fun getAddress(lat: Double, lng: Double): Pair<String?, String?> {
+        val addresses = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(lat, lng, 1)
+
+        val address = addresses?.get(0)?.getAddressLine(0)
+
+        val city = addresses?.get(0)?.locality
+        val state = addresses?.get(0)?.adminArea
+        val country = addresses?.get(0)?.countryName
+        val postalCode = addresses?.get(0)?.postalCode
+        val knownName = addresses?.get(0)?.featureName
+        return Pair(country,city)
     }
 }

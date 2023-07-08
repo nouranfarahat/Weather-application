@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="350dp"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    app:layout_constraintDimensionRatio="2:1"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:backgroundTint="@color/teal_200"
+    android:backgroundTint="@color/teal_700"
     app:cardCornerRadius="20dp">
 
     <LinearLayout
+        android:id="@+id/initial_dialog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,14 +24,15 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:src="@drawable/settingsone"/>
+                android:src="@drawable/settingsone" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/initial_setup"
-                android:textSize="30sp"
                 android:layout_marginStart="20dp"
-                android:textStyle="bold"/>
+                android:text="@string/initial_setup"
+                android:textStyle="bold"
+                android:textSize="25sp" />
 
         </LinearLayout>
 
@@ -56,31 +55,28 @@
                 android:id="@+id/location_initial_rg"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
+                    <RadioButton
+                        android:id="@+id/gps_initial_rb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/gps"
+                        android:textSize="22sp" />
 
                     <RadioButton
+                        android:id="@+id/map_initial_rb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/map"
                         android:textSize="22sp" />
 
-                    <RadioButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/gps"
-                        android:textSize="22sp"
-                        android:checked="true"/>
-                </LinearLayout>
             </RadioGroup>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -92,25 +88,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="@string/notification"
                 android:layout_weight="1"
-                android:textSize="22sp"/>
+                android:text="@string/notification"
+                android:textSize="22sp" />
+
             <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/notification_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:checked="true" />
         </LinearLayout>
+
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/ok_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_bg"
-            android:layout_marginTop="20dp"
             android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_bg"
             android:text="@string/ok"
-            android:textSize="20sp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="20sp" />
     </LinearLayout>
 
 
 </androidx.cardview.widget.CardView>
-</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,12 +6,11 @@
     android:layout_marginRight="10dp"
 
 
-    android:layout_width="100dp"
-    android:layout_height="200dp"
+    android:layout_width="80dp"
+    android:layout_height="150dp"
     android:backgroundTint="#82C1E1"
-    app:cardCornerRadius="50dp"
+    app:cardCornerRadius="20dp"
     app:cardElevation="3dp"
-    app:layout_constraintDimensionRatio="1:2"
     tools:ignore="MissingConstraints">
 
     <TextView

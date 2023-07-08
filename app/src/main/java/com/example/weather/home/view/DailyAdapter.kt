@@ -1,6 +1,7 @@
 package com.example.weather.home.view
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -15,6 +16,8 @@ import com.example.weather.utilities.*
 
 class DailyAdapter() : ListAdapter<Daily, DailyAdapter.ViewHolder>(DailyWeatherDiffUtil()) {
     lateinit var binding: DayForecastCardBinding
+    lateinit var language:String
+    lateinit var temperatureUnit:String
 
     class ViewHolder(var binding: DayForecastCardBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -22,6 +25,10 @@ class DailyAdapter() : ListAdapter<Daily, DailyAdapter.ViewHolder>(DailyWeatherD
         val inflater: LayoutInflater =
             parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         binding = DayForecastCardBinding.inflate(inflater, parent, false)
+        val sharedPreferences: SharedPreferences=parent.context.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
+
+        language=sharedPreferences.getString(Constants.LANGUAGE,Constants.ENGLISH).toString()
+        temperatureUnit=sharedPreferences.getString(Constants.TEMPERATURE_UNIT,Constants.STANDARD).toString()
         return ViewHolder(binding)
     }
 
@@ -36,10 +43,10 @@ class DailyAdapter() : ListAdapter<Daily, DailyAdapter.ViewHolder>(DailyWeatherD
                 Log.d("Translation", "Translated text: $translatedText")
             }
         }*/
-        holder.binding.dayTv.text = mapDays(getDay(currentDay.dt))
+        holder.binding.dayTv.text = getDay(currentDay.dt,language)
         holder.binding.forecastTv.text = currentDay.weather.get(0).description
         holder.binding.fullDayTempTv.text =
-            getFullTempFormat(currentDay.temp.min, currentDay.temp.max, Changables.temperatureUnit)
+            getFullTempFormat(currentDay.temp.min, currentDay.temp.max, temperatureUnit)
         Glide.with(holder.binding.weatherIconIv.context)
             .load(Constants.ICON_URL + currentDay.weather.get(0).icon + ".png")
             .placeholder(R.drawable.ic_launcher_background)

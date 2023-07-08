@@ -46,9 +46,12 @@ fun getDate(unixFormat: Long): String {
     return formatDate(date)
 }
 
-fun getDay(unixFormat: Long): String {
-    val date = convertUnixToDate(unixFormat)
-    return formatDayOfWeek(date)
+fun getDay(unixFormat: Long,language: String): String {
+    val day = convertUnixToDate(unixFormat)
+    if(language.equals(Constants.ARABIC))
+        return mapDays(formatDayOfWeek(day))
+
+    return formatDayOfWeek(day)
 }
 
 fun getTime(unixFormat: Long): String {
@@ -84,17 +87,17 @@ fun setPressure(pressure: Long,context: Context): String {
 
 fun setWind(wind: Double, unit: String,context: Context): String {
     var wind_speed = wind
-    if (unit.equals("imperial") && !Changables.temperatureUnit.equals("imperial")) {
+    if (unit.equals(Constants.IMPERIAL) && !Changables.temperatureUnit.equals("imperial")) {
         wind_speed = convertFromMeterPerSecToMilePerHour(wind)
-    } else if (!unit.equals("imperial") && Changables.temperatureUnit.equals("imperial")) {
+    } else if (!unit.equals(Constants.IMPERIAL) && Changables.temperatureUnit.equals("imperial")) {
         wind_speed = convertFromMilePerHourToMeterPerSec(wind)
     }
-    val unitDegree = if (unit.equals("imperial")) context.getString(R.string.mile_hour) else context.getString(R.string.meter_sec)
+    val unitDegree = if (unit.equals(Constants.IMPERIAL)) context.getString(R.string.mile_hour) else context.getString(R.string.meter_sec)
     var result= wind_speed.toString()
-    if(Changables.language==Constants.ARABIC)
+    /*if(Changables.language==Constants.ARABIC)
     {
         result=convertEnglishToArabicNumbers(result)
-    }
+    }*/
     return result+unitDegree
 }
 
@@ -109,7 +112,6 @@ fun convertFromMilePerHourToMeterPerSec(value: Double): Double {
 fun changeAppLanguage(language: String)
 {
     val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(language)
-// Call this on the main thread as it may require Activity.restart()
     AppCompatDelegate.setApplicationLocales(appLocale)
 }
 fun convertEnglishToArabicNumbers(input: String): String {
@@ -307,4 +309,23 @@ fun mapNumber(number: String): String {
         "9" to "٩"
     )
     return number.map { numberMapping.getOrDefault(it.toString(), it.toString()) }.joinToString("")
+}
+
+fun setTextViewValue(text:String,language:String):String
+{
+    var strValue=text
+    if(language.equals(Constants.ARABIC))
+    {
+        translateString(text, Constants.ENGLISH, Constants.ARABIC) { translatedText, exception ->
+            if (exception != null) {
+                Log.e("Translation", "Translation failed: ${exception.message}")
+            } else {
+                if (translatedText != null) {
+                    strValue=translatedText
+                }
+                Log.d("Translation", "Translated text: $translatedText")
+            }
+        }
+    }
+    return strValue
 }

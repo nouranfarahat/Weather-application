@@ -1,5 +1,6 @@
 package com.example.weather.network
 
+import com.example.weather.model.WeatherResponse
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

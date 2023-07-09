@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weather.R
 import com.example.weather.databinding.DayForecastCardBinding
-import com.example.weather.network.Daily
+import com.example.weather.model.Daily
 import com.example.weather.utilities.*
 
 class DailyAdapter() : ListAdapter<Daily, DailyAdapter.ViewHolder>(DailyWeatherDiffUtil()) {

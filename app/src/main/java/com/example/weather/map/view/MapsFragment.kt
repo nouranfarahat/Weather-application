@@ -8,10 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.mvvm.database.ConcreteLocalSource
 import com.example.weather.R
 import com.example.weather.databinding.FragmentMapsBinding
-import com.example.weather.home.view.HomeFragmentDirections
+import com.example.weather.map.viewmodel.MapViewModel
+import com.example.weather.map.viewmodel.MapViewModelFactory
+import com.example.weather.model.FavoriteWeather
+import com.example.weather.model.Repository
+import com.example.weather.network.WeatherClient
 import com.example.weather.utilities.Constants
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -26,8 +32,13 @@ class MapsFragment : Fragment() {
     lateinit var binding: FragmentMapsBinding
     lateinit var sharedPreferences: SharedPreferences
     lateinit var editor: SharedPreferences.Editor
+    lateinit var viewModel: MapViewModel
+    lateinit var mapViewModelFactory: MapViewModelFactory
     var latitude: Double = 0.0
     var longitude: Double = 0.0
+    lateinit var country:String
+    lateinit var city:String
+
     private var previousMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,8 +75,11 @@ class MapsFragment : Fragment() {
             previousMarker = googleMap.addMarker(MarkerOptions().position(location))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
 
-            binding.mapCountry.text = getAddress(latitude, longitude).first
-            binding.mapCity.text = getAddress(latitude, longitude).second
+            city=getAddress(latitude, longitude).second.toString()
+            country= getAddress(latitude, longitude).first.toString()
+
+            binding.mapCountry.text = country
+            binding.mapCity.text = city
 
             //passLocation()
         }
@@ -83,8 +97,13 @@ class MapsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mapFragment =
-            childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment?
+        mapViewModelFactory = MapViewModelFactory(
+            Repository.getInstance(
+                WeatherClient.getInstance(), ConcreteLocalSource(requireContext())
+            )
+        )
+        viewModel = ViewModelProvider(this, mapViewModelFactory).get(MapViewModel::class.java)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
 
         binding.mapOkBtn.setOnClickListener {
@@ -94,6 +113,12 @@ class MapsFragment : Fragment() {
 
             if (fragmentName.equals(Constants.HOME_FRAGMENT)) {
                 val action = MapsFragmentDirections.actionMapsFragmentToHomeFragment()
+                findNavController().navigate(action)
+            }
+            if (fragmentName.equals(Constants.FAVORITE_FRAGMENT)) {
+                val favWeather=FavoriteWeather(lat = latitude, lon = longitude, country =city )
+                viewModel.insertFavWeather(favWeather)
+                val action = MapsFragmentDirections.actionMapsFragmentToFavoriteFragment()
                 findNavController().navigate(action)
             }
         }

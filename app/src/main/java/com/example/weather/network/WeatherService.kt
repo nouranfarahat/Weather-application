@@ -1,6 +1,7 @@
 package com.example.weather.network
 
 
+import com.example.weather.model.WeatherResponse
 import com.example.weather.utilities.Constants
 import org.intellij.lang.annotations.Language
 import retrofit2.Response

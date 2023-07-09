@@ -1,4 +1,4 @@
-package com.example.weather.network
+package com.example.weather.model
 
 data class WeatherResponse (
 

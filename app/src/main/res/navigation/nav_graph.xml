@@ -56,4 +56,9 @@
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
+    <fragment
+        android:id="@+id/alertsFragment"
+        android:name="com.example.weather.alert.view.AlertsFragment"
+        android:label="Alerts"
+        tools:layout="@layout/fragment_alerts"/>
 </navigation>

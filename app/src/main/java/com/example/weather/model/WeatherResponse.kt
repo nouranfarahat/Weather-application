@@ -58,8 +58,8 @@ data class Alerts (
 
     val sender_name : String,
     val event : String,
-    val start : Int,
-    val end : Int,
+    val start : Long,
+    val end : Long,
     val description : String,
     val tags : List<String>
 )

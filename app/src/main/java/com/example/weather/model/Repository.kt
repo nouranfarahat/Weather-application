@@ -49,4 +49,16 @@ class Repository(
         return localSource.getFavWeatherList()
     }
 
+    override suspend fun insertAlertToList(alert: AlertPojo) {
+        localSource.insertWeatherAlert(alert)
+    }
+
+    override suspend fun removeAlertFromList(alert: AlertPojo) {
+        localSource.removeWeatherAlert(alert)
+    }
+
+    override suspend fun getWeatherAlertList(): Flow<List<AlertPojo>> {
+        return localSource.getWeatherAlertList()
+    }
+
 }

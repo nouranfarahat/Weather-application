@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.weather.model.AlertPojo
 import com.example.weather.model.FavoriteWeather
 
-@Database(entities = arrayOf(FavoriteWeather::class), version = 1)
+@Database(entities = [FavoriteWeather::class,AlertPojo::class], version = 1)
 abstract class WeatherDatabase:RoomDatabase() {
     abstract fun getFavWeatherDao():FavoriteWeatherDAO
+    abstract fun getWeatherAlertDao():WeatherAlertDAO
     companion object{
         @Volatile
         private var INSTANCE:WeatherDatabase?=null

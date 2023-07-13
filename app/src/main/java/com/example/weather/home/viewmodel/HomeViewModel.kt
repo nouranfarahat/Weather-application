@@ -3,9 +3,13 @@ package com.example.mvvm.allproducts.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weather.model.AlertPojo
 import com.example.weather.model.FavoriteWeather
 import com.example.weather.model.RepositoryInterface
+import com.example.weather.model.WeatherResponse
 import com.example.weather.utilities.ApiState
+import com.example.weather.utilities.FavState
+import com.example.weather.utilities.WeatherState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +21,7 @@ class HomeViewModel(private val repo: RepositoryInterface) : ViewModel() {
     private val mutableWeather : MutableStateFlow<ApiState> = MutableStateFlow(ApiState.Loading)
     val weatherResponse: StateFlow<ApiState>
         get() = mutableWeather
+
 
     /*init {
         getLocationWeather() //law m3mltsh de w kant getLocalProduct public hnadyha bs fe el activity?
@@ -36,6 +41,15 @@ class HomeViewModel(private val repo: RepositoryInterface) : ViewModel() {
                 Log.i("TAG", "getLocationWeather: Collect")
 
             } //hal hwa hyrg3 lw7do ll default Dispatcher b3d ma y5ls?
+    }
+
+
+    fun insertWeatherToRoom(weatherResponse: WeatherResponse)
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.insertWeather(weatherResponse)
+            //getLocalAlert()
+        }
     }
 
 

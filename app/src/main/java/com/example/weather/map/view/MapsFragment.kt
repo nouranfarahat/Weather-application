@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.location.Geocoder
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +20,14 @@ import com.example.weather.model.FavoriteWeather
 import com.example.weather.model.Repository
 import com.example.weather.network.WeatherClient
 import com.example.weather.utilities.Constants
+import com.example.weather.utilities.getAddress
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import org.intellij.lang.annotations.Language
 import java.util.*
 
 class MapsFragment : Fragment() {
@@ -66,6 +69,7 @@ class MapsFragment : Fragment() {
 
         googleMap.setOnMapClickListener { latlng ->
             previousMarker?.remove()
+            val language = sharedPreferences.getString(Constants.LANGUAGE, Constants.ENGLISH).toString()
             val location = LatLng(latlng.latitude, latlng.longitude)
             longitude = latlng.longitude
             latitude = latlng.latitude
@@ -75,8 +79,8 @@ class MapsFragment : Fragment() {
             previousMarker = googleMap.addMarker(MarkerOptions().position(location))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(location))
 
-            city=getAddress(latitude, longitude).second.toString()
-            country= getAddress(latitude, longitude).first.toString()
+            city=getAddress(requireContext(),latitude, longitude,language).first.toString()
+            country= getAddress(requireContext(),latitude, longitude,language).second.toString()
 
             binding.mapCountry.text = country
             binding.mapCity.text = city
@@ -121,20 +125,15 @@ class MapsFragment : Fragment() {
                 val action = MapsFragmentDirections.actionMapsFragmentToFavoriteFragment()
                 findNavController().navigate(action)
             }
+            /*if (fragmentName.equals(Constants.ALERT_FRAGMENT)) {
+                val favWeather=FavoriteWeather(lat = latitude, lon = longitude, country =city )
+                viewModel.insertFavWeather(favWeather)
+                val action = MapsFragmentDirections.actionMapsFragmentToFavoriteFragment()
+                findNavController().navigate(action)
+            }*/
         }
 
     }
 
-    private fun getAddress(lat: Double, lng: Double): Pair<String?, String?> {
-        val addresses = Geocoder(requireContext(), Locale.getDefault()).getFromLocation(lat, lng, 1)
 
-        val address = addresses?.get(0)?.getAddressLine(0)
-
-        val city = addresses?.get(0)?.locality
-        val state = addresses?.get(0)?.adminArea
-        val country = addresses?.get(0)?.countryName
-        val postalCode = addresses?.get(0)?.postalCode
-        val knownName = addresses?.get(0)?.featureName
-        return Pair(country,city)
-    }
 }

@@ -29,10 +29,12 @@ import com.example.weather.model.Repository
 import com.example.weather.network.WeatherClient
 import com.example.weather.utilities.Constants
 import com.example.weather.utilities.FavState
+import com.example.weather.utilities.isConnected
+import com.example.weather.utilities.showSnackBar
 import kotlinx.coroutines.launch
 
 
-class FavoriteFragment : Fragment(),OnFavoriteClickListener {
+class FavoriteFragment : Fragment(), OnFavoriteClickListener {
 
     lateinit var binding: FragmentFavoriteBinding
     lateinit var viewModel: FavoriteViewModel
@@ -44,7 +46,8 @@ class FavoriteFragment : Fragment(),OnFavoriteClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPreferences =
-            requireActivity().getSharedPreferences(Constants.SHARED_PREFERENCE_NAME,
+            requireActivity().getSharedPreferences(
+                Constants.SHARED_PREFERENCE_NAME,
                 Context.MODE_PRIVATE
             )
         editor = sharedPreferences.edit()
@@ -59,7 +62,7 @@ class FavoriteFragment : Fragment(),OnFavoriteClickListener {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_favorite, container, false)
         binding.lifecycleOwner = this
-        binding.action=this
+        binding.action = this
         favAdapter = FavoriteAdapter(this)
         binding.adapter = favAdapter
         return binding.root
@@ -77,7 +80,7 @@ class FavoriteFragment : Fragment(),OnFavoriteClickListener {
             viewModel.weatherFavResponse.collect { result ->
                 when (result) {
                     is FavState.Success -> {
-                        binding.favoriteEmpty.visibility=View.GONE
+                        binding.favoriteEmpty.visibility = View.GONE
                         binding.favRv.visibility = View.VISIBLE
                         favAdapter.submitList(result.data)
                         Log.i("TAG", "onViewCreated: Fav RV")
@@ -100,14 +103,12 @@ class FavoriteFragment : Fragment(),OnFavoriteClickListener {
             .setTitle("Delete")
             .setIcon(R.drawable.ic_baseline_delete_24)
             .setMessage("Are you sure delete this Country?")
-            .setPositiveButton("Yes"){
-                    dialog,_->
+            .setPositiveButton("Yes") { dialog, _ ->
                 viewModel.deleteWeatherFromFav(weather)
-                Toast.makeText(requireContext(),"Deleted this Country",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Deleted this Country", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
-            .setNegativeButton("No"){
-                    dialog,_->
+            .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()
             }
             .create()
@@ -117,16 +118,23 @@ class FavoriteFragment : Fragment(),OnFavoriteClickListener {
     override fun onCardClick(weather: FavoriteWeather) {
         //editor.putFloat(Constants.FAV_LATITUDE, weather.lat.toFloat()).apply()
         //editor.putFloat(Constants.FAV_LONGITUDE, weather.lon.toFloat()).apply()
-        editor.putString(Constants.FAVORITE_FRAGMENT,Constants.FAVORITE_FRAGMENT).apply()
+
+        editor.putString(Constants.FAVORITE_FRAGMENT, Constants.FAVORITE_FRAGMENT).apply()
         Toast.makeText(context, "To Home", Toast.LENGTH_LONG).show()
-        val action = FavoriteFragmentDirections.actionFavoriteFragmentToFavoriteWeatherFragment(weather)
+        val action =
+            FavoriteFragmentDirections.actionFavoriteFragmentToFavoriteWeatherFragment(weather)
         findNavController().navigate(action)
+
+
     }
 
     override fun onAddClick() {
-        editor.putString(Constants.FRAGMENT_NAME, Constants.FAVORITE_FRAGMENT).apply()
-        val action = FavoriteFragmentDirections.actionFavoriteFragmentToMapsFragment()
-        findNavController().navigate(action)
+        if (isConnected(requireContext())) {
+            editor.putString(Constants.FRAGMENT_NAME, Constants.FAVORITE_FRAGMENT).apply()
+            val action = FavoriteFragmentDirections.actionFavoriteFragmentToMapsFragment()
+            findNavController().navigate(action)
+        } else
+            showSnackBar(binding.root, resources.getString(R.string.check_connection))
     }
 
 

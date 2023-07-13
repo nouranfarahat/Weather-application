@@ -1,7 +1,12 @@
 package com.example.weather.model
 
-data class WeatherResponse (
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "Weather_Table")
+data class WeatherResponse (
+    @PrimaryKey
+    var id: Int=1,
     val lat : Double,
     val lon : Double,
     val timezone : String,
@@ -58,8 +63,8 @@ data class Alerts (
 
     val sender_name : String,
     val event : String,
-    val start : Long,
-    val end : Long,
+    var start : Long,
+    var end : Long,
     val description : String,
     val tags : List<String>
 )

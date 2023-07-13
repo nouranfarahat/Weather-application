@@ -105,6 +105,8 @@ dependencies {
     //Google
     implementation 'com.google.cloud:google-cloud-translate:2.0.0'
     implementation 'com.google.auth:google-auth-library-oauth2-http:0.23.0'
+    implementation 'com.google.android.libraries.places:places:3.1.0'
+
     //implementation 'com.google.mlkit:translate:17.0.1'
 
     // ML Kit dependencies
@@ -112,4 +114,39 @@ dependencies {
     implementation 'com.google.mlkit:language-id:16.0.0'
     implementation 'com.google.mlkit:translate:16.0.0'
 
+    //DatePicker
+    implementation 'com.wdullaer:materialdatetimepicker:4.2.3'
+
+    //for Kotlin + workManager
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
+
+    //turbine
+    testImplementation 'app.cash.turbine:turbine:1.0.0'
+
+    // Dependencies for local unit tests
+    testImplementation "junit:junit:$junitVersion"
+
+    // AndroidX Test - Instrumented testing
+    androidTestImplementation "androidx.test.ext:junit:$androidXTestExtKotlinRunnerVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    // hamcrest
+    testImplementation "org.hamcrest:hamcrest:2.2"
+    testImplementation "org.hamcrest:hamcrest-library:2.2"
+    androidTestImplementation "org.hamcrest:hamcrest:2.2"
+    androidTestImplementation "org.hamcrest:hamcrest-library:2.2"
+
+
+    // AndroidX and Robolectric
+
+    testImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
+    testImplementation "androidx.test:core-ktx:$androidXTestCoreVersion"
+    testImplementation "org.robolectric:robolectric:4.8"
+
+    // InstantTaskExecutorRule
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    //kotlinx-coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
 }

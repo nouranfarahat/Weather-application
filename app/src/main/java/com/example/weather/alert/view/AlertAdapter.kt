@@ -1,5 +1,6 @@
 package com.example.weather.alert.view
 
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -10,6 +11,7 @@ import com.example.weather.R
 import com.example.weather.databinding.AlertCardBinding
 import com.example.weather.favorite.view.OnFavoriteClickListener
 import com.example.weather.model.AlertPojo
+import com.example.weather.utilities.Constants
 
 
 class AlertAdapter(var listener: OnAlertClickListener

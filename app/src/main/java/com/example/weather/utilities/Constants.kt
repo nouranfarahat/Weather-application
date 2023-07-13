@@ -29,8 +29,22 @@ object Constants {
     const val FRAGMENT_NAME="FRAGMENT"
     const val HOME_FRAGMENT="HOME"
     const val FAVORITE_FRAGMENT="FAVORITE"
+    const val ALERT_FRAGMENT="ALERT"
     const val FAV_LATITUDE = "FAV_LATITUDE"
     const val FAV_LONGITUDE = "FAV_LONGITUDE"
+    const val ALERT="ALERT"
+    const val ALARM="ALARM"
+    const val FROM_DATE="FROM_DATE"
+    const val TO_DATE="TO_DATE"
+    const val FROM_TIME="FROM_TIME"
+    const val TO_TIME="TO_TIME"
+    const val ALERT_CARD_TYPE="TYPE"
+    const val FROM_CARD="FROM_CARD"
+    const val TO_CARD="TO_CARD"
+    const val TIMEZONE="TIMEZONE"
+    const val CHANNEL_ID = "CHANNEL_ID"
+
+
 
 
 

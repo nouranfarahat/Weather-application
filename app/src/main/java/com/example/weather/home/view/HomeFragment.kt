@@ -2,7 +2,6 @@ package com.example.weather.home.view
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
@@ -18,9 +17,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
-import android.widget.RadioButton
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -32,9 +28,9 @@ import com.example.mvvm.allproducts.viewmodel.HomeViewModelFactory
 import android.Manifest
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.mvvm.database.ConcreteLocalSource
 import com.example.weather.R
 import com.example.weather.databinding.FragmentHomeBinding
 import com.example.weather.databinding.InitialSetupDialogBinding
@@ -61,6 +57,8 @@ class HomeFragment : Fragment() {
 
     var latitude: Double = 1.0
     var longitude: Double = 1.0
+    var favLatitude: Double = 1.0
+    var favLongitude: Double = 1.0
     lateinit var language: String
     lateinit var unit: String
     var firstLaunch = true
@@ -92,43 +90,37 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.i("TAG", "onViewCreated: ")
         language = sharedPreferences.getString(Constants.LANGUAGE, Constants.ENGLISH).toString()
-        unit = sharedPreferences.getString(Constants.TEMPERATURE_UNIT, Constants.STANDARD).toString()
+        unit =
+            sharedPreferences.getString(Constants.TEMPERATURE_UNIT, Constants.STANDARD).toString()
         firstLaunch = sharedPreferences.getBoolean(Constants.FIRST_LAUNCH, true)
         locationType = sharedPreferences.getString(Constants.LOCATION, Constants.GPS).toString()
+
         //getLastLocation()
         homeViewModelFactory = HomeViewModelFactory(
             Repository.getInstance(
-                WeatherClient.getInstance()
+                WeatherClient.getInstance(), ConcreteLocalSource(requireContext())
             )
         )
         viewModel = ViewModelProvider(this, homeViewModelFactory).get(HomeViewModel::class.java)
         hourlyAdapter = HourlyAdapter()
         dailyAdapter = DailyAdapter()
         //getLastLocation()
-        Log.i("TAG", "onViewCreated: $locationType")
 
 
-
-        if (firstLaunch)
-        {
+        if (firstLaunch) {
             initialSetUp()
             editor.putBoolean(Constants.FIRST_LAUNCH, false).apply()
             showInitialSetupDialog()
-        }
-        else
-        {
-            if (locationType.equals(Constants.GPS))
-            {
+        } else {
+            if (locationType.equals(Constants.GPS)) {
                 Log.i("TAG", "onViewCreated: enter location type")
                 getLastLocation()
-            }
-            else
-            {
-                latitude=sharedPreferences.getFloat(Constants.LATITUDE, 0.0F).toDouble()
-                longitude=sharedPreferences.getFloat(Constants.LONGITUDE, 0.0F).toDouble()
+            } else {
+                latitude = sharedPreferences.getFloat(Constants.LATITUDE, 0.0F).toDouble()
+                longitude = sharedPreferences.getFloat(Constants.LONGITUDE, 0.0F).toDouble()
 
                 Log.i("TAG", "onViewCreated: map lat $latitude , map long $longitude ")
-                getWeatherApiResponse(latitude,longitude,language,unit)
+                getWeatherApiResponse(latitude, longitude, language, unit)
             }
         }
 
@@ -254,7 +246,7 @@ class HomeFragment : Fragment() {
             editor.putFloat(Constants.LATITUDE, latitude.toFloat()).apply()
             editor.putFloat(Constants.LONGITUDE, longitude.toFloat()).apply()
 
-            getWeatherApiResponse(latitude,longitude,language,unit)
+            getWeatherApiResponse(latitude, longitude, language, unit)
 
             Log.i("TAG", "Callback: lat=$latitude , long=$longitude ")
 
@@ -389,8 +381,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun showInitialSetupDialog() {
-        binding.progressBar.visibility = View.GONE
-        binding.homeFragmentComponents.visibility=View.GONE
+//        binding.progressBar.visibility = View.GONE
+//        binding.mainTempCard.visibility = View.GONE
+//        binding.weatherDetailsCard.visibility = View.GONE
         val dialogView = LayoutInflater.from(context).inflate(R.layout.initial_setup_dialog, null)
         initialSetupDialogBinding = InitialSetupDialogBinding.bind(dialogView)
         initialSetupDialogBinding.locationInitialRg.setOnCheckedChangeListener { group, checkedId ->
@@ -457,8 +450,7 @@ class HomeFragment : Fragment() {
 
     }
 
-    fun getWeatherApiResponse(lat:Double,longt:Double,lang:String,unit:String)
-    {
+    fun getWeatherApiResponse(lat: Double, longt: Double, lang: String, unit: String) {
         viewModel.getLocationWeather(
             lat,
             longt,
@@ -481,19 +473,7 @@ class HomeFragment : Fragment() {
                         binding.progressBar.visibility = View.GONE
                         binding.mainTempCard.visibility = View.VISIBLE
                         val countryName = result.data.timezone.substringAfter('/')
-
-//                        lifecycleScope.launch {
-//                            binding.cityTv.text = view?.let { translateText(it.context,countryName) }
-//                        }
-                        /*translateString(countryName, "en", "ar") { translatedText, exception ->
-                            if (exception != null) {
-                                Log.e("Translation", "Translation failed: ${exception.message}")
-                            } else {
-                                binding.cityTv.text = translatedText
-                                Log.d("Translation", "Translated text: $translatedText")
-                            }
-                        }*/
-                        binding.cityTv.text = setTextViewValue(countryName,language)
+                        binding.cityTv.text = setTextViewValue(countryName, language)
 
                         //binding.cityTv.text= translateText(countryName,Constants.ENGLISH,Constants.ARABIC)
                         binding.dateTv.text = getDate(currentWeather.dt)

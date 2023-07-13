@@ -1,6 +1,6 @@
 package com.example.weather.utilities
 
-import com.example.weather.network.WeatherResponse
+import com.example.weather.model.WeatherResponse
 
 
 sealed class ApiState

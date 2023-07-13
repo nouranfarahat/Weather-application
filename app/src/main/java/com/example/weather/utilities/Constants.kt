@@ -29,6 +29,8 @@ object Constants {
     const val FRAGMENT_NAME="FRAGMENT"
     const val HOME_FRAGMENT="HOME"
     const val FAVORITE_FRAGMENT="FAVORITE"
+    const val FAV_LATITUDE = "FAV_LATITUDE"
+    const val FAV_LONGITUDE = "FAV_LONGITUDE"
 
 
 

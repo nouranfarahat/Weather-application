@@ -3,8 +3,10 @@ package com.example.mvvm.allproducts.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weather.model.FavoriteWeather
 import com.example.weather.model.RepositoryInterface
 import com.example.weather.utilities.ApiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -51,14 +53,6 @@ class HomeViewModel(private val repo: RepositoryInterface) : ViewModel() {
     }*/
 
 
-
-    /*fun addProductToFav(product: Product)
-    {
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.insertProduct(product)
-            getLocalProducts() ////hya de bdl ma a3ml .notifychange?
-        }
-    }*/
 
 
 }

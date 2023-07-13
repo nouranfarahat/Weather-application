@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.weather.R
 import com.example.weather.databinding.HourlyForcastCardBinding
 import com.example.weather.databinding.TempBinding
-import com.example.weather.network.Hourly
+import com.example.weather.model.Hourly
 import com.example.weather.utilities.*
 
 class HourlyAdapter() :ListAdapter<Hourly, HourlyAdapter.ViewHolder>(HourlyWeatherDiffUtil()) {

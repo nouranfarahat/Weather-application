@@ -128,7 +128,7 @@ class FavoriteWeatherFragment : Fragment() {
                         binding.mainFavTempTv.text =
                             tempFormat(currentWeather.temp, Changables.temperatureUnit)
                         val iconStr =
-                            Constants.ICON_URL + currentWeather.weather.get(0).icon + ".png"
+                            mapIcons(currentWeather.weather.get(0).icon)
                         Glide.with(binding.mainFavIconIv.context)
                             .load(iconStr)
                             .placeholder(R.drawable.ic_launcher_background)

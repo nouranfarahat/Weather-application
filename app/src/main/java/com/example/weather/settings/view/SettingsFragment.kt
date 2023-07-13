@@ -42,7 +42,7 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.languageRg.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
-                R.id.enabled_rb -> {
+                R.id.english_rb -> {
                     editor.putString(Constants.LANGUAGE, Constants.ENGLISH).apply()
                     //Changables.language="en"
 

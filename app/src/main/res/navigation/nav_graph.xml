@@ -22,7 +22,11 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.weather.settings.view.SettingsFragment"
         android:label="@string/settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.example.weather.favorite.view.FavoriteFragment"
@@ -49,7 +53,7 @@
     <fragment
         android:id="@+id/favoriteWeatherFragment"
         android:name="com.example.weather.favorite.view.FavoriteWeatherFragment"
-        android:label="FavoriteWeatherFragment" >
+        android:label="Favorite Weather" >
         <argument
             android:name="favWeather"
             app:argType="com.example.weather.model.FavoriteWeather"

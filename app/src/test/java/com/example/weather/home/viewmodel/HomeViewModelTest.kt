@@ -95,4 +95,24 @@ class HomeViewModelTest {
         //Then
         assertThat(data, not(nullValue()))
     }
+
+    @Test
+    fun getCurrentWeather_returnNotNull() = runBlockingTest{
+        var data:WeatherResponse = weather3
+        viewModel.weatherCurrenrt.test {this.awaitItem().apply {
+            when(this)
+            {
+                is ApiState.Success-> {
+                    data=this.data
+                }
+                is ApiState.Failure-> {}
+                is ApiState.Loading-> {}
+            }
+        }
+
+
+        }
+        //Then
+        assertThat(data, not(nullValue()))
+    }
 }

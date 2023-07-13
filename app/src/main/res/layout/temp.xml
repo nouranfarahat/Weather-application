@@ -8,7 +8,7 @@
 
     android:layout_width="80dp"
     android:layout_height="150dp"
-    android:backgroundTint="#82C1E1"
+    android:backgroundTint="@color/black_4"
     app:cardCornerRadius="20dp"
     app:cardElevation="3dp"
     tools:ignore="MissingConstraints">
@@ -20,6 +20,8 @@
         android:layout_gravity="center|top"
         android:layout_margin="10dp"
         android:text="4 AM"
+        android:textColor="@color/white"
+
         android:textSize="15sp" />
 
     <ImageView
@@ -36,6 +38,8 @@
         android:layout_gravity="center|bottom"
         android:layout_margin="10dp"
         android:text="32 °C"
+        android:textColor="@color/white"
+
         android:textSize="15sp"
         android:textStyle="bold" />
 

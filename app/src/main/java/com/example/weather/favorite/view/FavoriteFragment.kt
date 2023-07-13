@@ -120,11 +120,10 @@ class FavoriteFragment : Fragment(), OnFavoriteClickListener {
         //editor.putFloat(Constants.FAV_LONGITUDE, weather.lon.toFloat()).apply()
 
         editor.putString(Constants.FAVORITE_FRAGMENT, Constants.FAVORITE_FRAGMENT).apply()
-        Toast.makeText(context, "To Home", Toast.LENGTH_LONG).show()
+        //Toast.makeText(context, "To Home", Toast.LENGTH_LONG).show()
         val action =
             FavoriteFragmentDirections.actionFavoriteFragmentToFavoriteWeatherFragment(weather)
         findNavController().navigate(action)
-
 
     }
 

@@ -1,12 +1,16 @@
 package com.example.weather.utilities
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.location.Geocoder
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.LocaleList
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.os.LocaleListCompat
 import com.example.weather.R
 import com.google.android.material.snackbar.Snackbar
@@ -18,6 +22,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.lang.System.currentTimeMillis
+import java.lang.ref.Cleaner.create
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -72,9 +77,14 @@ fun alertTimeFormat(time:String): Long {
 }
 fun getDay(unixFormat: Long,language: String): String {
     val day = convertUnixToDate(unixFormat)
-    if(language.equals(Constants.ARABIC))
-        return mapDays(formatDayOfWeek(day))
+    /*Log.i("Nouran", "getDay: $language  ${formatDayOfWeek(day)}")
+    if(language.equals(Constants.ARABIC)) {
+        Log.i("Nouran", "getDay: InFunction")
+        Log.i("Nouran", "getDay: map +${formatDayOfWeek(day)}  ${mapDays(formatDayOfWeek(day))}")
 
+        return mapDays(formatDayOfWeek(day))
+    }
+*/
     return formatDayOfWeek(day)
 }
 
@@ -83,14 +93,21 @@ fun getTime(unixFormat: Long): String {
     return formatTime(time)
 }
 
-fun tempFormat(temp: Double, unit: String): String {
+fun tempFormat(temp: Double, unit: String,language: String): String {
     val unitDegree = if (unit.equals("metric")) "°C" else if (unit.equals("imperial")) "°F" else " K"
-    return temp.toInt().toString() + unitDegree
+    if(language.equals(Constants.ARABIC))
+        return mapNumber(temp.toInt().toString()) + unitDegree
+
+    return temp.toInt().toString()+ unitDegree
+
 }
 
-fun getFullTempFormat(minTemp: Double, maxTemp: Double, unit: String): String {
+fun getFullTempFormat(minTemp: Double, maxTemp: Double, unit: String,language: String): String {
     val unitDegree = if (unit.equals("metric")) "°C" else if (unit.equals("imperial")) "°F" else " K"
+    if(language.equals(Constants.ARABIC))
+        return mapNumber( maxTemp.toInt().toString()) + "/" + mapNumber(minTemp.toInt().toString()) + unitDegree
     return maxTemp.toInt().toString() + "/" + minTemp.toInt().toString() + unitDegree
+
 }
 
 fun setHumidity(humidity: Long): String {
@@ -109,14 +126,15 @@ fun setPressure(pressure: Long,context: Context): String {
     return pressure.toString() + context.getString(R.string.hpa)
 }
 
-fun setWind(wind: Double, unit: String,context: Context): String {
+fun setWind(wind: Double, windSpeed:String,unit: String,context: Context): String {
     var wind_speed = wind
-    if (unit.equals(Constants.IMPERIAL) && !Changables.temperatureUnit.equals("imperial")) {
-        wind_speed = convertFromMeterPerSecToMilePerHour(wind)
-    } else if (!unit.equals(Constants.IMPERIAL) && Changables.temperatureUnit.equals("imperial")) {
-        wind_speed = convertFromMilePerHourToMeterPerSec(wind)
+    if (windSpeed.equals(Constants.IMPERIAL) && !unit.equals(Constants.IMPERIAL)) {
+        wind_speed =convertFromMeterPerSecToMilePerHour(wind)
+
+    } else if (!windSpeed.equals(Constants.IMPERIAL) && unit.equals(Constants.IMPERIAL)) {
+        wind_speed =convertFromMilePerHourToMeterPerSec(wind)
     }
-    val unitDegree = if (unit.equals(Constants.IMPERIAL)) context.getString(R.string.mile_hour) else context.getString(R.string.meter_sec)
+    val unitDegree = if (windSpeed.equals(Constants.IMPERIAL)) context.getString(R.string.mile_hour) else context.getString(R.string.meter_sec)
     var result= wind_speed.toString()
     /*if(Changables.language==Constants.ARABIC)
     {
@@ -137,6 +155,28 @@ fun changeAppLanguage(language: String)
 {
     val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(language)
     AppCompatDelegate.setApplicationLocales(appLocale)
+    /*val locale = Locale(language)
+    val appLocale = LocaleList(locale)
+
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+
+    Locale.setDefault(locale)
+    Configuration().apply {
+        setLocale(locale)
+        Resources.getSystem().updateConfiguration(this, null)
+    }
+    Resources.getSystem().configuration.setLocales(appLocale)
+    Resources.getSystem().updateConfiguration(Resources.getSystem().configuration, null)*/
+}
+fun  setLanguage(context: Context, language:String) {
+    val locale = Locale(language)
+    val config = context.resources.configuration
+    config.locale= Locale(language)
+    Locale.setDefault(locale)
+    config.setLayoutDirection(Locale(language))
+    context.resources.updateConfiguration(config, context.resources.displayMetrics)
+    context.createConfigurationContext(config)
 }
 fun convertEnglishToArabicNumbers(input: String): String {
     val arabicLocale = Locale("ar")
@@ -401,7 +441,7 @@ fun mapIcons(icon: String): Int {
     return iconMapping.getOrDefault(icon, R.drawable.sunny)
 }
 fun getAddress(context: Context,lat: Double, lng: Double,language: String): Pair<String?, String?> {
-    val addresses = Geocoder(context, Locale(language)).getFromLocation(lat, lng, 1)
+    val addresses = Geocoder(context, Locale.getDefault()).getFromLocation(lat, lng, 1)
 
     val address = addresses?.get(0)?.getAddressLine(0)
 

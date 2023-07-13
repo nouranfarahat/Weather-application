@@ -56,12 +56,16 @@ class AlertWorker(private var context: Context, private var workerParams: Worker
 
     var sharedPreferences: SharedPreferences =
         context.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, MODE_PRIVATE)
+    var editor = sharedPreferences.edit()
 
     var language = sharedPreferences.getString(Constants.LANGUAGE, Constants.ENGLISH).toString()
     var latitude = sharedPreferences.getFloat(Constants.LATITUDE, 0.0F).toDouble()
     var longitude = sharedPreferences.getFloat(Constants.LONGITUDE, 0.0F).toDouble()
     var unit =
         sharedPreferences.getString(Constants.TEMPERATURE_UNIT, Constants.STANDARD).toString()
+    val alertTag =sharedPreferences.getString(Constants.ALERT_TAG, " ").toString()
+
+
     lateinit var resultProducts: Response<WeatherResponse>
 
     /*val alertType = inputData.getString("alertType")
@@ -74,7 +78,8 @@ class AlertWorker(private var context: Context, private var workerParams: Worker
         val startTime = alert.fullStartTime
         val endTime = alert.fullEndTime
         val alertType = alert.type
-        val alertTag = alert.startTime.toString()
+        //editor.putString(Constants.ALERT_TAG, " ").apply()
+
         Log.i("Nouran", "doWork: Type= ${alert.type}")
 
         Log.i("Nouran", "doWork: system time= ${getFullTime(System.currentTimeMillis())}")
@@ -113,7 +118,7 @@ class AlertWorker(private var context: Context, private var workerParams: Worker
             withContext(Dispatchers.Main)
             {
                 Log.i("TAG", "doWork: Catch+ ${e.message}")
-                Toast.makeText(context, "Worker fail", Toast.LENGTH_LONG).show()
+                //Toast.makeText(context, "Worker fail", Toast.LENGTH_LONG).show()
 
             }
 
@@ -138,7 +143,7 @@ class AlertWorker(private var context: Context, private var workerParams: Worker
 
         val builder = AlertDialog.Builder(applicationContext).create().apply {
             setView(alarmCardBinding.root)
-
+            alarmCardBinding.alarmDescription.text = description
             window?.setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY)
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             window?.setGravity(Gravity.TOP)
@@ -146,11 +151,10 @@ class AlertWorker(private var context: Context, private var workerParams: Worker
             mediaPlayer.isLooping = true
             mediaPlayer.start()
 
-            alarmCardBinding.alarmDescription.text = description
             alarmCardBinding.dismissBtn.setOnClickListener {
+                cancelWorker(alertTag, alertPojo)
                 dismiss()
 
-                cancelWorker(alertTag, alertPojo)
                 //removefromworker
             }
             setOnDismissListener {
@@ -186,9 +190,10 @@ class AlertWorker(private var context: Context, private var workerParams: Worker
         worker.cancelAllWorkByTag(alertTag)
         CoroutineScope(Dispatchers.IO).launch{
             repo.localSource.removeWeatherAlert(alertPojo)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(context, "Deleted this Alert", Toast.LENGTH_SHORT).show()
-            }
+
+//            withContext(Dispatchers.Main) {
+//                Toast.makeText(context, "Deleted this Alert", Toast.LENGTH_SHORT).show()
+//            }
         }
     }
 }

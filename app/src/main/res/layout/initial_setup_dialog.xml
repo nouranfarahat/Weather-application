@@ -6,7 +6,7 @@
     android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:backgroundTint="@color/teal_700"
+    android:backgroundTint="@color/black_2"
     app:cardCornerRadius="20dp">
 
     <LinearLayout
@@ -31,6 +31,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:text="@string/initial_setup"
+                android:textColor="@color/white"
+
                 android:textStyle="bold"
                 android:textSize="25sp" />
 
@@ -47,6 +49,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="@string/location"
+                android:textColor="@color/white"
+
                 android:textSize="22sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -64,6 +68,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:textColor="@color/white"
+
                         android:text="@string/gps"
                         android:textSize="22sp" />
 
@@ -72,6 +78,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/map"
+                        android:textColor="@color/white"
+
                         android:textSize="22sp" />
 
             </RadioGroup>
@@ -90,6 +98,8 @@
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:text="@string/notification"
+                android:textColor="@color/white"
+
                 android:textSize="22sp" />
 
             <androidx.appcompat.widget.SwitchCompat

@@ -22,6 +22,9 @@ class HomeViewModel(private val repo: RepositoryInterface) : ViewModel() {
     val weatherResponse: StateFlow<ApiState>
         get() = mutableWeather
 
+    private val mutableCurrentWeather: MutableStateFlow<ApiState> = MutableStateFlow(ApiState.Loading)
+    val weatherCurrenrt: StateFlow<ApiState>
+        get() = mutableCurrentWeather
 
     /*init {
         getLocationWeather() //law m3mltsh de w kant getLocalProduct public hnadyha bs fe el activity?
@@ -50,6 +53,19 @@ class HomeViewModel(private val repo: RepositoryInterface) : ViewModel() {
             repo.insertWeather(weatherResponse)
             //getLocalAlert()
         }
+    }
+    fun getCurrentWeather() = viewModelScope.launch(Dispatchers.IO) {
+
+        repo.getWeather()
+            .catch {   e-> mutableCurrentWeather.value= ApiState.Failure(e)
+                Log.i("TAG", "getLocationWeather: offline Catch")
+            }
+            .collect{
+                    data-> mutableCurrentWeather.value= ApiState.Success(data.get(0))
+                Log.i("TAG", "getLocationWeather: offline Collect")
+
+            }
+
     }
 
 

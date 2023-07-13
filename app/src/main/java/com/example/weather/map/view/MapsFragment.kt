@@ -115,7 +115,7 @@ class MapsFragment : Fragment() {
                 sharedPreferences.getString(Constants.FRAGMENT_NAME, Constants.HOME_FRAGMENT)
                     .toString()
 
-            if (fragmentName.equals(Constants.HOME_FRAGMENT)) {
+            if (fragmentName.equals(Constants.HOME_FRAGMENT)||fragmentName.equals(Constants.SETTINGS_FRAGMENT)) {
                 val action = MapsFragmentDirections.actionMapsFragmentToHomeFragment()
                 findNavController().navigate(action)
             }

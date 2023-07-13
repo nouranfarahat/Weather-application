@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#784b">
+    android:layout_height="100dp"
+    android:background="@color/black_1">
 
     <ImageView
         android:id="@+id/circleImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="82dp"
         android:src="@drawable/sunny"
         app:layout_constraintEnd_toStartOf="@+id/textView"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="41dp"
         android:layout_marginEnd="111dp"
-        android:text="TextView"
+        android:text="@string/weather"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/circleImageView"

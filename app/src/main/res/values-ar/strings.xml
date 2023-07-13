@@ -41,6 +41,9 @@
     <string name="overlay_message">من فضلك اسمح للتطبيق بالتراكب</string>
     <string name="permission_grant">سماح</string>
     <string name="check_connection">لقد فقدت الإتصال باإنترنت</string>
+    <string name="weather">الطقس</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="fav_weather">الطقس المفضل</string>
 
 
 </resources>

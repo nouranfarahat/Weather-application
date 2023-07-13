@@ -1,5 +1,6 @@
 package com.example.weather.alert.view
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -132,7 +133,7 @@ class AlertsFragment : Fragment(), OnAlertClickListener {
                     }
 
                     else -> {
-                        Toast.makeText(context, "Check your Connection", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
 
                     }
                 }
@@ -140,6 +141,7 @@ class AlertsFragment : Fragment(), OnAlertClickListener {
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun showAlertSettingsDialog() {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.alert_dialog, null)
         alertDialogBinding = AlertDialogBinding.bind(dialogView)
@@ -153,7 +155,7 @@ class AlertsFragment : Fragment(), OnAlertClickListener {
                     println("Notify")
                     Log.i("TAG", "showInitialSetupDialog: Notify")
 
-                    Toast.makeText(context, "Notify", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(context, "Notify", Toast.LENGTH_SHORT).show()
                 }
                 R.id.alarm_radio_button -> {
                     //Changables.windSpeedUnit = "imperial"
@@ -162,7 +164,7 @@ class AlertsFragment : Fragment(), OnAlertClickListener {
                     println("Alarm")
                     Log.i("TAG", "showInitialSetupDialog: Alarm")
 
-                    Toast.makeText(context, "Alarm", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(context, "Alarm", Toast.LENGTH_SHORT).show()
 
                 }
 
@@ -232,7 +234,8 @@ class AlertsFragment : Fragment(), OnAlertClickListener {
                                 .build()
                             if(!flag){
                                 Log.i("Nouran", "showAlertSettingsDialog: ${weatherAlert.fullStartTime - System.currentTimeMillis()}")
-                            val request:WorkRequest = OneTimeWorkRequestBuilder<AlertWorker>()
+                                editor.putString(Constants.ALERT_TAG, weatherAlert.startTime.toString()).apply()
+                                val request:WorkRequest = OneTimeWorkRequestBuilder<AlertWorker>()
                                 .setInputData(requestData)
                                 .setInitialDelay(
                                     weatherAlert.fullStartTime - System.currentTimeMillis(),
@@ -257,7 +260,7 @@ class AlertsFragment : Fragment(), OnAlertClickListener {
 
 
 
-            Toast.makeText(context, "Save", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Saved", Toast.LENGTH_LONG).show()
             Log.i("TAG", "onViewCreated: ADD to ROOM")
             requestOverlayPermission(this)
             dialog.dismiss()
@@ -365,6 +368,9 @@ class AlertsFragment : Fragment(), OnAlertClickListener {
             .setMessage("Are you sure delete this Alert?")
             .setPositiveButton("Yes") { dialog, _ ->
                 viewModel.deleteAlertFromList(alert)
+                val worker = WorkManager.getInstance(requireContext())
+                val alertTag=sharedPreferences.getString(Constants.ALERT_TAG, " ").toString()
+                worker.cancelAllWorkByTag(alertTag)
                 Toast.makeText(requireContext(), "Deleted this Alert", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }

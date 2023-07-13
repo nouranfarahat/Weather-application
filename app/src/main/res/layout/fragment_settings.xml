@@ -9,7 +9,6 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/teal_200"
         android:columnCount="2">
 
         <androidx.cardview.widget.CardView
@@ -19,7 +18,7 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
-            android:backgroundTint="@color/purple_700"
+            android:backgroundTint="@color/black_2"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp">
 
@@ -49,6 +48,8 @@
                         android:layout_weight="2"
                         android:gravity="center"
                         android:text="@string/language"
+                        android:textColor="@color/white"
+
                         app:autoSizeMaxTextSize="20sp"
                         app:autoSizeMinTextSize="16sp"
                         app:autoSizeStepGranularity="1sp"
@@ -74,6 +75,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:checked="true"
+                        android:textColor="@color/white"
+
                         android:text="@string/english" />
 
                     <RadioButton
@@ -81,6 +84,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:textColor="@color/white"
+
                         android:text="@string/arabic" />
                 </RadioGroup>
             </LinearLayout>
@@ -93,7 +98,7 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
-            android:backgroundTint="@color/purple_700"
+            android:backgroundTint="@color/black_2"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp">
 
@@ -123,6 +128,8 @@
                         android:layout_weight="2"
                         android:gravity="center"
                         android:text="@string/location"
+                        android:textColor="@color/white"
+
                         app:autoSizeMaxTextSize="20sp"
                         app:autoSizeMinTextSize="16sp"
                         app:autoSizeStepGranularity="1sp"
@@ -144,6 +151,8 @@
 
                     <RadioButton
                         android:id="@+id/gps_rb"
+                        android:textColor="@color/white"
+
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
@@ -155,6 +164,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:textColor="@color/white"
+
                         android:text="@string/map" />
                 </RadioGroup>
             </LinearLayout>
@@ -167,7 +178,7 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
-            android:backgroundTint="@color/purple_700"
+            android:backgroundTint="@color/black_2"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp">
 
@@ -198,6 +209,8 @@
                         android:layout_weight="2"
                         android:gravity="right"
                         android:text="@string/temperature"
+                        android:textColor="@color/white"
+
                         app:autoSizeMaxTextSize="20sp"
                         app:autoSizeMinTextSize="16sp"
                         app:autoSizeStepGranularity="1sp"
@@ -222,6 +235,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:textColor="@color/white"
+
                         android:text="@string/celsius" />
 
                     <RadioButton
@@ -229,6 +244,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
+                        android:textColor="@color/white"
+
                         android:text="@string/fehrenheit" />
 
                     <RadioButton
@@ -237,6 +254,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:text="@string/kelvin"
+                        android:textColor="@color/white"
+
                         android:checked="true"/>
                 </RadioGroup>
             </LinearLayout>
@@ -249,7 +268,7 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
-            android:backgroundTint="@color/purple_700"
+            android:backgroundTint="@color/black_2"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp">
 
@@ -278,6 +297,8 @@
                         android:layout_gravity="center"
                         android:layout_weight="2"
                         android:gravity="center"
+                        android:textColor="@color/white"
+
                         android:text="@string/notification"
                         app:autoSizeMaxTextSize="20sp"
                         app:autoSizeMinTextSize="16sp"
@@ -300,6 +321,9 @@
 
                     <RadioButton
                         android:id="@+id/enabled_rb"
+                        android:textColor="@color/white"
+
+
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
@@ -308,6 +332,8 @@
 
                     <RadioButton
                         android:id="@+id/disabled_rb"
+                        android:textColor="@color/white"
+
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
@@ -323,7 +349,7 @@
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:layout_margin="5dp"
-            android:backgroundTint="@color/purple_700"
+            android:backgroundTint="@color/black_2"
             app:cardCornerRadius="20dp"
             app:cardElevation="8dp">
 
@@ -354,6 +380,8 @@
                         android:layout_weight="2"
                         android:gravity="right"
                         android:text="@string/wind_speed"
+                        android:textColor="@color/white"
+
                         app:autoSizeMaxTextSize="20sp"
                         app:autoSizeMinTextSize="16sp"
                         app:autoSizeStepGranularity="1sp"
@@ -379,12 +407,15 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:text="@string/meter_sec"
+                        android:textColor="@color/white"
                         android:checked="true"/>
 
                     <RadioButton
                         android:id="@+id/mile_rb"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+
                         android:layout_marginStart="5dp"
                         android:text="@string/mile_hour" />
 

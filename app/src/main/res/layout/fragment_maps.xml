@@ -17,12 +17,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@drawable/bacground_top"
-        android:backgroundTint="@color/teal_700"
+        android:backgroundTint="@color/black_2"
         android:orientation="vertical"
         android:padding="10dp">
 
         <TextView
             android:id="@+id/map_city"
+            android:textColor="@color/white"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left|top"
@@ -37,6 +39,8 @@
             android:layout_gravity="left|top"
             android:layout_marginBottom="5dp"
             android:text=""
+            android:textColor="@color/white"
+
             android:textSize="20sp" />
 
         <androidx.appcompat.widget.AppCompatButton

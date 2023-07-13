@@ -29,6 +29,8 @@ object Constants {
     const val FRAGMENT_NAME="FRAGMENT"
     const val HOME_FRAGMENT="HOME"
     const val FAVORITE_FRAGMENT="FAVORITE"
+    const val SETTINGS_FRAGMENT="SETTINGS"
+
     const val ALERT_FRAGMENT="ALERT"
     const val FAV_LATITUDE = "FAV_LATITUDE"
     const val FAV_LONGITUDE = "FAV_LONGITUDE"
@@ -43,6 +45,7 @@ object Constants {
     const val TO_CARD="TO_CARD"
     const val TIMEZONE="TIMEZONE"
     const val CHANNEL_ID = "CHANNEL_ID"
+    const val ALERT_TAG="ALERT_TAG"
 
 
 

@@ -23,7 +23,7 @@ class FavoriteViewModel(private val repo: RepositoryInterface) : ViewModel() {
         getLocalWeather() //law m3mltsh de w kant getLocalProduct public hnadyha bs fe el activity?
     }
 
-    private fun getLocalWeather() = viewModelScope.launch(Dispatchers.IO) {
+    fun getLocalWeather() = viewModelScope.launch(Dispatchers.IO) {
 
         repo.getFavWeatherList()
             .catch { e ->

@@ -7,10 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.example.weather.R
-import com.example.weather.databinding.FragmentHomeBinding
 import com.example.weather.databinding.FragmentSettingsBinding
-import com.example.weather.utilities.Changables
 import com.example.weather.utilities.Constants
 import com.example.weather.utilities.changeAppLanguage
 
@@ -20,6 +19,11 @@ class SettingsFragment : Fragment() {
     lateinit var binding: FragmentSettingsBinding
     lateinit var sharedPreferences: SharedPreferences
     lateinit var editor: SharedPreferences.Editor
+    lateinit var language: String
+    lateinit var unit: String
+    lateinit var windSpeed:String
+    lateinit var notification:String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,23 +44,61 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.languageRg.setOnCheckedChangeListener { group, checkedId ->
+        language = sharedPreferences.getString(Constants.LANGUAGE, Constants.ENGLISH).toString()
+        windSpeed = sharedPreferences.getString(Constants.WIND_SPEED_UNIT, Constants.METRIC).toString()
+        notification = sharedPreferences.getString(Constants.NOTIFICATION, Constants.ENABLED).toString()
+
+        unit =
+            sharedPreferences.getString(Constants.TEMPERATURE_UNIT, Constants.STANDARD).toString()
+        initialSetting()
+        binding.arabicRb.setOnClickListener{
+            editor.putString(Constants.LANGUAGE, Constants.ARABIC).apply()
+//            setLanguage(requireContext(),
+//                sharedPreferences.getString(Constants.LANGUAGE, Constants.ARABIC).toString()
+//            )
+            changeAppLanguage(
+                sharedPreferences.getString(Constants.LANGUAGE, Constants.ARABIC).toString()
+            )
+            //requireActivity().recreate()
+        }
+        binding.englishRb.setOnClickListener{
+            editor.putString(Constants.LANGUAGE, Constants.ENGLISH).apply()
+//            setLanguage(requireContext(),
+//                sharedPreferences.getString(Constants.LANGUAGE, Constants.ENGLISH).toString()
+//            )
+            changeAppLanguage(
+                sharedPreferences.getString(Constants.LANGUAGE, Constants.ARABIC).toString()
+            )
+            //requireActivity().recreate()
+
+        }
+        binding.meterRb.setOnClickListener {
+            editor.putString(Constants.WIND_SPEED_UNIT, Constants.METRIC).apply()
+
+        }
+        binding.mileRb.setOnClickListener {
+            editor.putString(Constants.WIND_SPEED_UNIT, Constants.IMPERIAL).apply()
+
+        }
+        /*binding.languageRg.setOnCheckedChangeListener { group, checkedId ->
+
             when (checkedId) {
+                R.id.arabic_rb -> {
+                    editor.putString(Constants.LANGUAGE, Constants.ARABIC).apply()
+                    //Changables.language="ar"
+                }
                 R.id.english_rb -> {
                     editor.putString(Constants.LANGUAGE, Constants.ENGLISH).apply()
                     //Changables.language="en"
 
                 }
-                R.id.arabic_rb -> {
-                    editor.putString(Constants.LANGUAGE, Constants.ARABIC).apply()
-                    //Changables.language="ar"
-                }
+
 
             }
             changeAppLanguage(
-                sharedPreferences.getString(Constants.LANGUAGE, Constants.ENGLISH).toString()
+                sharedPreferences.getString(Constants.LANGUAGE, Constants.ARABIC).toString()
             )
-        }
+        }*/
 
         binding.temperatureRg.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
@@ -78,7 +120,7 @@ class SettingsFragment : Fragment() {
 
             }
         }
-        binding.windSpeedRg.setOnCheckedChangeListener { group, checkedId ->
+        /*binding.windSpeedRg.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.meter_rb -> {
                     //Changables.windSpeedUnit = "metric"
@@ -87,12 +129,12 @@ class SettingsFragment : Fragment() {
                 }
                 R.id.mile_rb -> {
                     //Changables.windSpeedUnit = "imperial"
-                    editor.putString(Constants.WIND_SPEED_UNIT, Constants.METRIC).apply()
+                    editor.putString(Constants.WIND_SPEED_UNIT, Constants.IMPERIAL).apply()
 
                 }
 
             }
-        }
+        }*/
         binding.notificationRg.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.enabled_rb -> {
@@ -114,15 +156,48 @@ class SettingsFragment : Fragment() {
                     //Changables.windSpeedUnit = "metric"
                     editor.putString(Constants.LOCATION, Constants.GPS).apply()
 
+
                 }
                 R.id.map_rb -> {
                     //Changables.windSpeedUnit = "imperial"
                     editor.putString(Constants.LOCATION, Constants.MAP).apply()
+                    editor.putString(Constants.FRAGMENT_NAME, Constants.SETTINGS_FRAGMENT).apply()
+
+                    val action = SettingsFragmentDirections.actionSettingsFragmentToMapsFragment()
+                    findNavController().navigate(action)
 
                 }
 
             }
         }
     }
+    fun initialSetting()
+    {
+        when(language)
+        {
+            Constants.ARABIC->binding.arabicRb.isChecked=true
+            Constants.ENGLISH->binding.englishRb.isChecked=true
+        }
+        when(unit)
+        {
+            Constants.STANDARD->binding.kelvinRb.isChecked=true
+            Constants.IMPERIAL->binding.fehrinheitRb.isChecked=true
+            Constants.METRIC->binding.celsiusRb.isChecked=true
+
+        }
+        when(notification)
+        {
+            Constants.ENABLED->binding.enabledRb.isChecked=true
+            Constants.DISABLED->binding.disabledRb.isChecked=true
+        }
+        when(windSpeed)
+        {
+            Constants.METRIC->binding.meterRb.isChecked=true
+            Constants.IMPERIAL->binding.mileRb.isChecked=true
+        }
+
+    }
 
 }
+
+

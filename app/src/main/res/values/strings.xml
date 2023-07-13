@@ -41,6 +41,10 @@
     <string name="overlay_message">Please allow Application overlay permission</string>
     <string name="permission_grant">Allow</string>
     <string name="check_connection">You are offline, Check your connection</string>
+    <string name="weather">Weather</string>
+    <string name="alerts">Alerts</string>
+    <string name="fav_weather">Favorite Weather</string>
+
 
 
 

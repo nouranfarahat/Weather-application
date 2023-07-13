@@ -1,9 +1,14 @@
 package com.example.weather.model
 
+import app.cash.turbine.test
 import com.example.weather.utilities.Constants
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
+import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.not
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.core.IsEqual
 import org.junit.Assert
 import org.junit.Assert.*
@@ -20,7 +25,7 @@ class RepositoryTest {
     private val favItem2 = FavoriteWeather(2, 2.5, 4.5, "Berlin")
     private val favItem3 = FavoriteWeather(3, 3.5, 5.5, "London")
 
-    private val favList = mutableListOf<FavoriteWeather>(favItem1, favItem2, favItem3)
+    private val favList = mutableListOf<FavoriteWeather>(favItem1, favItem2)
 
     private val alert1 =
         AlertPojo(1, 11111, 11111, 11111, 11111, "Cairo", 11111, 11111, Constants.ALARM, "fine")
@@ -92,6 +97,39 @@ class RepositoryTest {
             assertThat(oneCallResponse, IsEqual(localTasks))
 
         }
+    }
+
+    @Test
+    fun insertWeatherToFav_weather_return3()= runBlockingTest {
+        repo.insertWeatherToFav(favItem3)
+        var sz=0
+        repo.getFavWeatherList().collect{
+            sz=it.size
+        }
+        assertThat(sz, IsEqual(3))
+
+    }
+
+    @Test
+    fun removeWeatherFromFav_weather_return1()= runBlockingTest {
+        repo.removeWeatherFromFav(favItem2)
+        var sz=0
+        repo.getFavWeatherList().collect{
+            sz=it.size
+        }
+        assertThat(sz, IsEqual(1))
+
+    }
+
+    @Test
+    fun getFavWeatherList_notNull()= runBlockingTest {
+
+        var data= emptyList<FavoriteWeather>()
+        repo.getFavWeatherList().collect{
+            data=it
+        }
+        assertThat(data, not(nullValue()))
+
     }
 
 

@@ -46,9 +46,9 @@ class DailyAdapter() : ListAdapter<Daily, DailyAdapter.ViewHolder>(DailyWeatherD
         holder.binding.dayTv.text = getDay(currentDay.dt,language)
         holder.binding.forecastTv.text = currentDay.weather.get(0).description
         holder.binding.fullDayTempTv.text =
-            getFullTempFormat(currentDay.temp.min, currentDay.temp.max, temperatureUnit)
+            getFullTempFormat(currentDay.temp.min, currentDay.temp.max, temperatureUnit,language)
         Glide.with(holder.binding.weatherIconIv.context)
-            .load(Constants.ICON_URL + currentDay.weather.get(0).icon + ".png")
+            .load(mapIcons(currentDay.weather.get(0).icon))
             .placeholder(R.drawable.ic_launcher_background)
             .error(R.drawable.ic_launcher_foreground)
             .into(holder.binding.weatherIconIv)

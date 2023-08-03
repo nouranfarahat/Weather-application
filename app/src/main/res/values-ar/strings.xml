@@ -29,6 +29,21 @@
     <string name="m"> م</string>
     <string name="ultra_violet">فوق البنفسجي</string>
     <string name="home">الرئيسية</string>
+    <string name="initial_setup">الإعدادات الأولية</string>
+    <string name="ok">حسناً</string>
+    <string name="from">من</string>
+    <string name="to">إلي</string>
+    <string name="set_alarm">ضبط المنبه</string>
+    <string name="alarm">منبه</string>
+    <string name="save">حفظ</string>
+    <string name="cancel">إلغاء</string>
+    <string name="overlay_permission">إذن التراكب  </string>
+    <string name="overlay_message">من فضلك اسمح للتطبيق بالتراكب</string>
+    <string name="permission_grant">سماح</string>
+    <string name="check_connection">لقد فقدت الإتصال باإنترنت</string>
+    <string name="weather">الطقس</string>
+    <string name="alerts">التنبيهات</string>
+    <string name="fav_weather">الطقس المفضل</string>
 
 
 </resources>

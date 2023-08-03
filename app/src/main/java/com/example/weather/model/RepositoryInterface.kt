@@ -21,4 +21,8 @@ interface RepositoryInterface {
     suspend fun removeAlertFromList(alert: AlertPojo)
     suspend fun getWeatherAlertList(): Flow<List<AlertPojo>>
 
+    suspend fun insertWeather(weatherResponse: WeatherResponse)
+    suspend fun removeWeather(weatherResponse: WeatherResponse)
+    suspend fun getWeather(): Flow<List<WeatherResponse>>
+
 }

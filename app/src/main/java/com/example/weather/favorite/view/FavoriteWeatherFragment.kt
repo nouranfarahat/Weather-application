@@ -39,7 +39,7 @@ class FavoriteWeatherFragment : Fragment() {
     lateinit var dailyAdapter: DailyAdapter
     lateinit var sharedPreferences: SharedPreferences
     lateinit var editor: SharedPreferences.Editor
-
+    lateinit var windSpeed:String
     var latitude: Double = 1.0
     var longitude: Double = 1.0
     var favLatitude: Double = 1.0
@@ -75,6 +75,8 @@ class FavoriteWeatherFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         language = sharedPreferences.getString(Constants.LANGUAGE, Constants.ENGLISH).toString()
+        windSpeed = sharedPreferences.getString(Constants.WIND_SPEED_UNIT, Constants.METRIC).toString()
+
         unit =
             sharedPreferences.getString(Constants.TEMPERATURE_UNIT, Constants.STANDARD).toString()
         locationType = sharedPreferences.getString(Constants.LOCATION, Constants.GPS).toString()
@@ -90,7 +92,92 @@ class FavoriteWeatherFragment : Fragment() {
         val favWeather = getArguments()?.let {
             val res = FavoriteWeatherFragmentArgs.fromBundle(it).favWeather
             if (res != null) {
-                getWeatherApiResponse(res.lat, res.lon, language, unit)
+                if(isConnected(requireContext()))
+                {
+                    getWeatherApiResponse(res.lat, res.lon, language, unit)
+
+                }
+                else{
+                    viewModel.getCurrentWeather()
+                    lifecycleScope.launch {
+                        viewModel.weatherCurrenrt.collect { result ->
+                            when (result) {
+                                is ApiState.Success -> {
+                                    val currentWeather = result.data.current
+
+                                    binding.progressFavBar.visibility = View.GONE
+                                    binding.mainFavTempTv.visibility = View.VISIBLE
+                                    val countryName = result.data.timezone.substringAfter('/')
+                                    //binding.cityFavTv.text = setTextViewValue(countryName, language)
+                                    binding.cityFavTv.text = getAddress(
+                                        requireActivity(),
+                                        result.data.lat,
+                                        result.data.lon,
+                                        language
+                                    ).first
+
+                                    //binding.cityTv.text= translateText(countryName,Constants.ENGLISH,Constants.ARABIC)
+                                    binding.dateFavTv.text = getDate(currentWeather.dt)
+                                    binding.mainFavTempTv.text =
+                                        tempFormat(currentWeather.temp, unit,language)
+                                    val iconStr =
+                                        mapIcons(currentWeather.weather.get(0).icon)
+                                    Glide.with(binding.mainFavIconIv.context)
+                                        .load(iconStr)
+                                        .placeholder(R.drawable.ic_launcher_background)
+                                        .error(R.drawable.ic_launcher_foreground)
+                                        .into(binding.mainFavIconIv)
+                                    binding.descriptionFavTv.text = currentWeather.weather.get(0).description
+
+                                    hourlyAdapter.submitList(result.data.hourly)
+                                    binding.hourlyFavRv.apply {
+                                        adapter = hourlyAdapter
+                                        setHasFixedSize(true)
+                                    }
+
+                                    dailyAdapter.submitList(result.data.daily)
+                                    binding.daysFavRv.apply {
+                                        adapter = dailyAdapter
+                                        setHasFixedSize(true)
+                                    }
+                                    binding.weatherDetailsFavCard.visibility = View.VISIBLE
+                                    binding.humidityValueFavTv.text = setHumidity(currentWeather.humidity)
+                                    binding.visibilityValueFavTv.text = setVisibility(
+                                        currentWeather.visibility,
+                                        binding.visibilityValueFavTv.context
+                                    )
+                                    binding.windValueFavTv.text = setWind(
+                                        currentWeather.wind_speed,
+                                        windSpeed,
+                                        unit,
+                                        binding.windValueFavTv.context
+                                    )
+                                    binding.pressureValueFavTv.text =
+                                        setPressure(currentWeather.pressure, binding.pressureValueFavTv.context)
+                                    binding.cloudValueFavTv.text = setClouds(currentWeather.clouds)
+                                    binding.uvValueFavTv.text = currentWeather.uvi.toString()
+
+                                }
+                                is ApiState.Loading -> {
+                                    binding.progressFavBar.visibility = View.VISIBLE
+                                    binding.mainFavTempTv.visibility = View.GONE
+                                    binding.weatherDetailsFavCard.visibility = View.GONE
+
+
+                                }
+
+                                is ApiState.Failure -> {
+                                    binding.progressFavBar.visibility = View.GONE
+                                    binding.weatherDetailsFavCard.visibility = View.GONE
+
+                                    Toast.makeText(context, result.msg.message, Toast.LENGTH_SHORT).show()
+
+                                }
+                            }
+                        }
+
+                    }
+                }
                 Toast.makeText(context, "Country ${res.country}", Toast.LENGTH_LONG).show()
                 Log.i("TAG", "onViewCreated: From fav")
 
@@ -121,14 +208,20 @@ class FavoriteWeatherFragment : Fragment() {
                         binding.progressFavBar.visibility = View.GONE
                         binding.mainFavTempTv.visibility = View.VISIBLE
                         val countryName = result.data.timezone.substringAfter('/')
-                        binding.cityFavTv.text = setTextViewValue(countryName, language)
+                        //binding.cityFavTv.text = setTextViewValue(countryName, language)
+                        binding.cityFavTv.text = getAddress(
+                            requireActivity(),
+                            lat,
+                            longt,
+                            language
+                        ).first
 
                         //binding.cityTv.text= translateText(countryName,Constants.ENGLISH,Constants.ARABIC)
                         binding.dateFavTv.text = getDate(currentWeather.dt)
                         binding.mainFavTempTv.text =
-                            tempFormat(currentWeather.temp, Changables.temperatureUnit)
+                            tempFormat(currentWeather.temp, unit,language)
                         val iconStr =
-                            Constants.ICON_URL + currentWeather.weather.get(0).icon + ".png"
+                            mapIcons(currentWeather.weather.get(0).icon)
                         Glide.with(binding.mainFavIconIv.context)
                             .load(iconStr)
                             .placeholder(R.drawable.ic_launcher_background)
@@ -156,7 +249,8 @@ class FavoriteWeatherFragment : Fragment() {
                         )
                         binding.windValueFavTv.text = setWind(
                             currentWeather.wind_speed,
-                            Changables.windSpeedUnit,
+                            windSpeed,
+                            unit,
                             binding.windValueFavTv.context
                         )
                         binding.pressureValueFavTv.text =

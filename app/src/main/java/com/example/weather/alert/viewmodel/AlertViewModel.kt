@@ -8,6 +8,7 @@ import com.example.weather.model.FavoriteWeather
 import com.example.weather.model.RepositoryInterface
 import com.example.weather.utilities.AlertState
 import com.example.weather.utilities.FavState
+import com.example.weather.utilities.WeatherState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +20,9 @@ class AlertViewModel (private val repo: RepositoryInterface) : ViewModel() {
     private val mutableWeatherAlert: MutableStateFlow<AlertState> = MutableStateFlow(AlertState.Loading)
     val weatherAlertResponse: StateFlow<AlertState>
         get() = mutableWeatherAlert
+    private val mutableCurrentWeather: MutableStateFlow<WeatherState> = MutableStateFlow(WeatherState.Loading)
+    val weatherCurrenrtResponse: StateFlow<WeatherState>
+        get() = mutableCurrentWeather
 
     init {
         getLocalAlert()
@@ -44,6 +48,24 @@ class AlertViewModel (private val repo: RepositoryInterface) : ViewModel() {
             getLocalAlert()
         }
     }
+    fun insertAlertToList(alertPojo: AlertPojo)
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.insertAlertToList(alertPojo)
+            //getLocalAlert()
+        }
+    }
+    fun getWeather()=viewModelScope.launch(Dispatchers.IO)
+    {
+        repo.getWeather()
+            .catch {   e-> mutableCurrentWeather.value= WeatherState.Failure(e)
+                Log.i("TAG", "getLocationWeather: Catch")
+            }
+            .collect{
+                    data-> mutableCurrentWeather.value= WeatherState.Success(data)
+                Log.i("TAG", "getLocationWeather: Collect")
 
+            }
+    }
 
 }

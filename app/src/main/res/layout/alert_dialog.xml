@@ -7,10 +7,13 @@
     android:layout_gravity="center"
     android:layout_marginStart="10dp"
     android:layout_marginTop="25dp"
+    android:background="@drawable/rounded_bg"
     android:layout_marginEnd="10dp">
 
     <TextView
         android:id="@+id/set"
+        android:textColor="@color/white"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -28,7 +31,8 @@
         style="@style/text_style"
         android:layout_width="140dp"
         android:layout_marginTop="28dp"
-        android:background="@drawable/bacground_top"
+        android:textColor="@color/white"
+        android:background="@drawable/button_bg"
         android:gravity="center"
         android:padding="10dp"
         android:text="@string/from"
@@ -41,7 +45,7 @@
         style="@style/text_style"
         android:layout_width="140dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/bacground_top"
+        android:background="@drawable/button_bg"
         android:gravity="center"
         android:padding="10dp"
         android:text="@string/to"
@@ -157,66 +161,6 @@
 
     </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/textView3"
-        style="@style/text_style"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/bacground_top"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="Choose the location"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/card_from" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/choose_location_card"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="@color/white"
-        android:clickable="true"
-        android:elevation="8dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/textView3"
-        app:layout_constraintStart_toStartOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/textView3">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="10dp"
-                android:src="@drawable/location" />
-
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="@color/white"
-                android:clickable="true"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:hint="Egypt / Cairo "
-                android:padding="5dp"
-                android:textColor="#676666"
-                android:textSize="18sp" />
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-
     <RadioGroup
         android:id="@+id/alert_type_radio_group"
         android:layout_width="wrap_content"
@@ -227,41 +171,42 @@
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="@id/guideline_left2"
         app:layout_constraintEnd_toEndOf="@id/guideline_right2"
-        app:layout_constraintTop_toBottomOf="@id/choose_location_card">
-
-        <RadioButton
-            android:id="@+id/notif_radio_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
-            android:buttonTint="@color/purple_500"
-            android:checked="true"
-            android:enabled="true"
-            android:text="Alarm"
-            android:textColor="@color/teal_700"
-            android:textSize="18sp" />
+        app:layout_constraintTop_toBottomOf="@id/card_from">
 
         <RadioButton
             android:id="@+id/alarm_radio_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="2dp"
+            android:buttonTint="@color/yellow"
+            android:checked="true"
+            android:enabled="true"
+            android:text="@string/alarm"
+
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/notification_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="10dp"
-            android:buttonTint="@color/purple_500"
+            android:buttonTint="@color/yellow"
             android:text="@string/notification"
-            android:textColor="@color/teal_700"
+            android:textColor="@color/white"
             android:textSize="18sp" />
     </RadioGroup>
 
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_save_alert"
+        android:id="@+id/btn_cancel_alert"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/purple_500"
+        android:backgroundTint="@color/yellow"
         android:gravity="center"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="15sp"
@@ -270,19 +215,19 @@
         app:layout_constraintTop_toBottomOf="@+id/alert_type_radio_group" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_cancel_alert"
+        android:id="@+id/btn_save_alert"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:backgroundTint="@color/teal_700"
+        android:backgroundTint="@color/yellow"
         android:gravity="center"
-        android:text="Save"
+        android:text="@string/save"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="15sp"
         app:cornerRadius="15dp"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_save_alert"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_cancel_alert"
         app:layout_constraintEnd_toEndOf="@id/guideline_right2"
-        app:layout_constraintTop_toTopOf="@+id/btn_save_alert" />
+        app:layout_constraintTop_toTopOf="@+id/btn_cancel_alert" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_left2"

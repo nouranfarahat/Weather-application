@@ -125,7 +125,7 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="5dp"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/black_4"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
 
@@ -147,6 +147,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/humidity"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="20sp" />
 
@@ -155,6 +157,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="77%"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -170,7 +174,7 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="5dp"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/black_4"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
 
@@ -193,6 +197,8 @@
                             android:layout_height="wrap_content"
                             android:text="@string/ultra_violet"
                             android:textAlignment="center"
+                            android:textColor="@color/white"
+
                             android:textSize="20sp" />
 
                         <TextView
@@ -200,6 +206,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0.5"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -213,7 +221,7 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="5dp"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/black_4"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
 
@@ -235,6 +243,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/wind"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="20sp" />
 
@@ -243,6 +253,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="2.06m/s"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -256,7 +268,7 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="5dp"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/black_4"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
 
@@ -278,6 +290,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/cloud"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="20sp" />
 
@@ -286,6 +300,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0%"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -299,7 +315,7 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="5dp"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/black_4"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
 
@@ -322,6 +338,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/pressure"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="20sp" />
 
@@ -330,6 +348,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/hpa"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -343,7 +363,7 @@
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="5dp"
-                    android:backgroundTint="@color/purple_700"
+                    android:backgroundTint="@color/black_4"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="8dp">
 
@@ -366,6 +386,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/visibility"
+                            android:textColor="@color/white"
+
                             android:textAlignment="center"
                             android:textSize="20sp" />
 
@@ -376,6 +398,8 @@
                             android:text="@string/m"
                             android:textAlignment="center"
                             android:textSize="18sp"
+                            android:textColor="@color/white"
+
                             android:textStyle="bold" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

@@ -61,4 +61,16 @@ class Repository(
         return localSource.getWeatherAlertList()
     }
 
+    override suspend fun insertWeather(weatherResponse: WeatherResponse) {
+        localSource.insertWeather(weatherResponse)
+    }
+
+    override suspend fun removeWeather(weatherResponse: WeatherResponse) {
+        localSource.removeWeather(weatherResponse)
+    }
+
+    override suspend fun getWeather(): Flow<List<WeatherResponse>> {
+        return localSource.getWeather()
+    }
+
 }

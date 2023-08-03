@@ -47,9 +47,9 @@ class HourlyAdapter() :ListAdapter<Hourly, HourlyAdapter.ViewHolder>(HourlyWeath
         holder.binding.timeTv.text= getTime(currentHour.dt)
 
         //holder.binding.timeTv.text= translateString(getTime( currentHour.dt),Constants.ENGLISH,Constants.ARABIC)
-        holder.binding.tempTv.text= tempFormat( currentHour.temp, temperatureUnit)
+        holder.binding.tempTv.text= tempFormat( currentHour.temp, temperatureUnit,language)
         Glide.with(holder.binding.hourWeatherIconIv.context)
-            .load(Constants.ICON_URL+currentHour.weather.get(0).icon+".png")
+            .load(mapIcons(currentHour.weather.get(0).icon))
             .placeholder(R.drawable.ic_launcher_background)
             .error(R.drawable.ic_launcher_foreground)
             .into(holder.binding.hourWeatherIconIv)

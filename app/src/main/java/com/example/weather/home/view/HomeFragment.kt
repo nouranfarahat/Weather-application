@@ -61,6 +61,7 @@ class HomeFragment : Fragment() {
     var favLongitude: Double = 1.0
     lateinit var language: String
     lateinit var unit: String
+    lateinit var windSpeed:String
     var firstLaunch = true
     lateinit var locationType: String
 
@@ -90,6 +91,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.i("TAG", "onViewCreated: ")
         language = sharedPreferences.getString(Constants.LANGUAGE, Constants.ENGLISH).toString()
+        windSpeed = sharedPreferences.getString(Constants.WIND_SPEED_UNIT, Constants.METRIC).toString()
+
         unit =
             sharedPreferences.getString(Constants.TEMPERATURE_UNIT, Constants.STANDARD).toString()
         firstLaunch = sharedPreferences.getBoolean(Constants.FIRST_LAUNCH, true)
@@ -112,16 +115,135 @@ class HomeFragment : Fragment() {
             editor.putBoolean(Constants.FIRST_LAUNCH, false).apply()
             showInitialSetupDialog()
         } else {
-            if (locationType.equals(Constants.GPS)) {
-                Log.i("TAG", "onViewCreated: enter location type")
-                getLastLocation()
-            } else {
-                latitude = sharedPreferences.getFloat(Constants.LATITUDE, 0.0F).toDouble()
-                longitude = sharedPreferences.getFloat(Constants.LONGITUDE, 0.0F).toDouble()
+            binding.progressBar.visibility = View.VISIBLE
+            binding.mainTempCard.visibility = View.GONE
+            binding.weatherDetailsCard.visibility = View.GONE
+            binding.hourlyRv.visibility = View.GONE
+            binding.daysRv.visibility = View.GONE
 
-                Log.i("TAG", "onViewCreated: map lat $latitude , map long $longitude ")
-                getWeatherApiResponse(latitude, longitude, language, unit)
+            if (isConnected(requireContext())) {
+                if (locationType.equals(Constants.GPS)) {
+                    Log.i("TAG", "onViewCreated: enter location type")
+                    getLastLocation()
+                } else {
+                    latitude = sharedPreferences.getFloat(Constants.LATITUDE, 0.0F).toDouble()
+                    longitude = sharedPreferences.getFloat(Constants.LONGITUDE, 0.0F).toDouble()
+
+                    Log.i("TAG", "onViewCreated: map lat $latitude , map long $longitude ")
+                    getWeatherApiResponse(latitude, longitude, language, unit)
+                }
+            } else {
+                //binding.weatherDetailsCard.visibility = View.VISIBLE
+
+                //binding.humidityCard.visibility=View.VISIBLE
+                Snackbar.make(
+                    binding.root,
+                    resources.getString(R.string.check_connection),
+                    Snackbar.LENGTH_LONG
+                ).show()
+                viewModel.getCurrentWeather()
+                lifecycleScope.launch {
+                    viewModel.weatherCurrenrt.collect { weather ->
+                        when (weather) {
+                            is ApiState.Success -> {
+                                Log.i("Nouran", "onViewCreated: Sucess offline")
+
+                                val currentWeather = weather.data.current
+                                binding.weatherDetailsCard.visibility = View.VISIBLE
+                                binding.progressBar.visibility = View.GONE
+                                binding.mainTempCard.visibility = View.VISIBLE
+                                binding.hourlyRv.visibility = View.VISIBLE
+                                binding.daysRv.visibility = View.VISIBLE
+
+                                val countryName = weather.data.timezone.substringAfter('/')
+                                editor.putString(Constants.TIMEZONE, countryName).apply()
+
+                                binding.cityTv.text = getAddress(
+                                    requireContext(),
+                                    latitude,
+                                    longitude,
+                                    language
+                                ).first
+                                Log.i(
+                                    "TAG",
+                                    "Translated Countryyyy: ${
+                                        setTextViewValue(
+                                            countryName,
+                                            language
+                                        )
+                                    } "
+                                )
+
+                                //binding.cityTv.text= translateText(countryName,Constants.ENGLISH,Constants.ARABIC)
+                                binding.dateTv.text = getDate(currentWeather.dt)
+                                binding.mainTempTv.text =
+                                    tempFormat(currentWeather.temp, unit,language)
+                                val iconStr =
+                                    mapIcons(currentWeather.weather.get(0).icon)
+                                Glide.with(requireContext())
+                                    .load(iconStr)
+                                    .placeholder(R.drawable.ic_launcher_background)
+                                    .error(R.drawable.ic_launcher_foreground)
+                                    .into(binding.mainIconIv)
+                                binding.descriptionTv.text =
+                                    currentWeather.weather.get(0).description
+
+                                hourlyAdapter.submitList(weather.data.hourly)
+                                binding.hourlyRv.apply {
+                                    adapter = hourlyAdapter
+                                    setHasFixedSize(true)
+                                }
+
+                                dailyAdapter.submitList(weather.data.daily)
+                                binding.daysRv.apply {
+                                    adapter = dailyAdapter
+                                    setHasFixedSize(true)
+                                }
+                                binding.weatherDetailsCard.visibility = View.VISIBLE
+                                binding.humidityValueTv.text = setHumidity(currentWeather.humidity)
+                                binding.visibilityValueTv.text = setVisibility(
+                                    currentWeather.visibility,
+                                    binding.visibilityValueTv.context
+                                )
+                                binding.windValueTv.text = setWind(
+                                    currentWeather.wind_speed,
+                                    windSpeed,
+                                    unit,
+                                    binding.windValueTv.context
+                                )
+                                binding.pressureValueTv.text =
+                                    setPressure(
+                                        currentWeather.pressure,
+                                        binding.pressureValueTv.context
+                                    )
+                                binding.cloudValueTv.text = setClouds(currentWeather.clouds)
+                                binding.uvValueTv.text = currentWeather.uvi.toString()
+                                binding.weatherDetailsCard.visibility = View.VISIBLE
+
+
+                            }
+                            is ApiState.Loading -> {
+                                binding.progressBar.visibility = View.VISIBLE
+                                binding.mainTempCard.visibility = View.GONE
+                                binding.weatherDetailsCard.visibility = View.GONE
+
+
+                            }
+
+                            is ApiState.Failure -> {
+                                binding.progressBar.visibility = View.GONE
+                                binding.weatherDetailsCard.visibility = View.GONE
+
+                                //Toast.makeText(context, result.msg.message, Toast.LENGTH_SHORT).show()
+
+                            }
+                        }
+
+                    }
+                }
+
             }
+
         }
 
 
@@ -129,120 +251,18 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        lifecycleScope.launch {
-//
-//            Log.i("TAG", "onResume: lat=$lat , long=$longt ")
-//
-//            println("cdfvgbhjgfdfvghj $longt ,hghgyhg $lat found")
-//
-//            Log.i("TAG", "onResume after callback: lat=$lat , long=$longt ")
-//            viewModel.weatherResponse.collect { result ->
-//                when (result) {
-//                    is ApiState.Success -> {
-//                        Log.i("TAG", "Success before: lat=$lat , long=$longt ")
-//                        val currentWeather = result.data.current
-//
-//                        binding.progressBar.visibility = View.GONE
-//                        binding.mainTempCard.visibility = View.VISIBLE
-//                        val countryName = result.data.timezone.substringAfter('/')
-//
-////                        lifecycleScope.launch {
-////                            binding.cityTv.text = view?.let { translateText(it.context,countryName) }
-////                        }
-//                        translateString(countryName, "en", "ar") { translatedText, exception ->
-//                            if (exception != null) {
-//                                Log.e("Translation", "Translation failed: ${exception.message}")
-//                            } else {
-//                                binding.cityTv.text = translatedText
-//                                Log.d("Translation", "Translated text: $translatedText")
-//                            }
-//                        }
-//                        //binding.cityTv.text= translateText(countryName,Constants.ENGLISH,Constants.ARABIC)
-//                        binding.dateTv.text = getDate(currentWeather.dt)
-//                        binding.mainTempTv.text =
-//                            tempFormat(currentWeather.temp, Changables.temperatureUnit)
-//                        val iconStr =
-//                            Constants.ICON_URL + currentWeather.weather.get(0).icon + ".png"
-//                        Glide.with(binding.mainIconIv.context)
-//                            .load(iconStr)
-//                            .placeholder(R.drawable.ic_launcher_background)
-//                            .error(R.drawable.ic_launcher_foreground)
-//                            .into(binding.mainIconIv)
-//                        binding.descriptionTv.text = currentWeather.weather.get(0).description
-//
-//                        hourlyAdapter.submitList(result.data.hourly)
-//                        binding.hourlyRv.apply {
-//                            adapter = hourlyAdapter
-//                            setHasFixedSize(true)
-//                        }
-//
-//                        dailyAdapter.submitList(result.data.daily)
-//                        binding.daysRv.apply {
-//                            adapter = dailyAdapter
-//                            setHasFixedSize(true)
-//                        }
-//                        Log.i("TAG", "Success: lat=$lat , long=$longt ")
-//                        binding.weatherDetailsCard.visibility = View.VISIBLE
-//                        binding.humidityValueTv.text = setHumidity(currentWeather.humidity)
-//                        binding.visibilityValueTv.text = setVisibility(
-//                            currentWeather.visibility,
-//                            binding.visibilityValueTv.context
-//                        )
-//                        binding.windValueTv.text = setWind(
-//                            currentWeather.wind_speed,
-//                            Changables.windSpeedUnit,
-//                            binding.windValueTv.context
-//                        )
-//                        binding.pressureValueTv.text =
-//                            setPressure(currentWeather.pressure, binding.pressureValueTv.context)
-//                        binding.cloudValueTv.text = setClouds(currentWeather.clouds)
-//                        binding.uvValueTv.text = currentWeather.uvi.toString()
-//
-//                        //viewModel.translateText(countryName)
-//                        /*viewModel.translationResponse
-//                            .collect { data ->
-//                                when (data) {
-//                                    is TranslateState.Success -> {
-//                                        binding.cityTv.text = data
-//                                    }
-//                                    is TranslateState.Failure -> {
-//                                        Toast.makeText(context, data.msg.message, Toast.LENGTH_SHORT).show()
-//                                    }
-//                                    is TranslateState.Loading->{
-//                                        Log.i("TAG", "Loading:")
-//
-//                                    }
-//                                }
-//                            }*/
-//                    }
-//                    is ApiState.Loading -> {
-//                        binding.progressBar.visibility = View.VISIBLE
-//                        binding.mainTempCard.visibility = View.GONE
-//                        binding.weatherDetailsCard.visibility = View.GONE
-//
-//                        Log.i("TAG", "Loading: lat=$lat , long=$longt ")
-//
-//                    }
-//
-//                    is ApiState.Failure -> {
-//                        binding.progressBar.visibility = View.GONE
-//                        binding.weatherDetailsCard.visibility = View.GONE
-//                        Log.i("TAG", "Failure: lat=$lat , long=$longt ${result.msg.message}")
-//
-//                        Toast.makeText(context, result.msg.message, Toast.LENGTH_SHORT).show()
-//
-//                    }
-//                }
-//            }
-//        }
 
     }
 
     private val locationCallBack: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            val lastLocation: Location = locationResult.lastLocation
-            latitude = lastLocation.latitude
-            longitude = lastLocation.longitude
+            val lastLocation: Location? = locationResult.lastLocation
+            if (lastLocation != null) {
+                latitude = lastLocation.latitude
+            }
+            if (lastLocation != null) {
+                longitude = lastLocation.longitude
+            }
             editor.putFloat(Constants.LATITUDE, latitude.toFloat()).apply()
             editor.putFloat(Constants.LONGITUDE, longitude.toFloat()).apply()
 
@@ -381,9 +401,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun showInitialSetupDialog() {
-//        binding.progressBar.visibility = View.GONE
-//        binding.mainTempCard.visibility = View.GONE
-//        binding.weatherDetailsCard.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.mainTempCard.visibility = View.GONE
+        binding.weatherDetailsCard.visibility = View.GONE
+        binding.hourlyRv.visibility = View.GONE
+        binding.daysRv.visibility = View.GONE
         val dialogView = LayoutInflater.from(context).inflate(R.layout.initial_setup_dialog, null)
         initialSetupDialogBinding = InitialSetupDialogBinding.bind(dialogView)
         initialSetupDialogBinding.locationInitialRg.setOnCheckedChangeListener { group, checkedId ->
@@ -396,7 +418,7 @@ class HomeFragment : Fragment() {
                     println("GPS")
                     Log.i("TAG", "showInitialSetupDialog: GPS")
 
-                    Toast.makeText(context, "GPS", Toast.LENGTH_SHORT).show()
+                    // Toast.makeText(context, "GPS", Toast.LENGTH_SHORT).show()
                 }
                 R.id.map_initial_rb -> {
                     //Changables.windSpeedUnit = "imperial"
@@ -405,7 +427,7 @@ class HomeFragment : Fragment() {
                     println("MAP")
                     Log.i("TAG", "showInitialSetupDialog: MAP")
 
-                    Toast.makeText(context, "MAP", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(context, "MAP", Toast.LENGTH_SHORT).show()
 
                 }
 
@@ -415,11 +437,11 @@ class HomeFragment : Fragment() {
             if (isChecked) {
                 editor.putString(Constants.NOTIFICATION, Constants.ENABLED).apply()
 
-                Toast.makeText(context, "Enabled", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(context, "Enabled", Toast.LENGTH_SHORT).show()
             } else {
                 editor.putString(Constants.NOTIFICATION, Constants.DISABLED).apply()
 
-                Toast.makeText(context, "Disabled", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "Disabled", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -429,20 +451,24 @@ class HomeFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         initialSetupDialogBinding.okBtn.setOnClickListener {
             dialog.dismiss()
+            binding.progressBar.visibility = View.VISIBLE
             locationType = sharedPreferences.getString(Constants.LOCATION, Constants.GPS).toString()
             if (locationType.equals(Constants.MAP)) {
-                Toast.makeText(context, "MAP IN", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "MAP IN", Toast.LENGTH_SHORT).show()
 
                 editor.putString(Constants.FRAGMENT_NAME, Constants.HOME_FRAGMENT).apply()
 
                 val action = HomeFragmentDirections.actionHomeFragmentToMapsFragment()
                 findNavController().navigate(action)
             } else {
-                Toast.makeText(context, "GPS IN", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "GPS IN", Toast.LENGTH_SHORT).show()
 
                 getLastLocation()
             }
-            Toast.makeText(context, "OK", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "OK", Toast.LENGTH_SHORT).show()
+            //binding.progressBar.visibility = View.VISIBLE
+            //binding.mainTempCard.visibility = View.VISIBLE
+            //binding.weatherDetailsCard.visibility = View.VISIBLE
         }
 
         dialog.show()
@@ -467,25 +493,38 @@ class HomeFragment : Fragment() {
             viewModel.weatherResponse.collect { result ->
                 when (result) {
                     is ApiState.Success -> {
+                        viewModel.insertWeatherToRoom(result.data)
                         Log.i("TAG", "Success before: lat=$lat , long=$longt ")
                         val currentWeather = result.data.current
-
+                        binding.weatherDetailsCard.visibility = View.VISIBLE
                         binding.progressBar.visibility = View.GONE
                         binding.mainTempCard.visibility = View.VISIBLE
+                        binding.hourlyRv.visibility = View.VISIBLE
+                        binding.daysRv.visibility = View.VISIBLE
+
                         val countryName = result.data.timezone.substringAfter('/')
-                        binding.cityTv.text = setTextViewValue(countryName, language)
+                        editor.putString(Constants.TIMEZONE, countryName).apply()
+
+                        binding.cityTv.text =
+                            context?.let { getAddress(it, latitude, longitude, language).first }
+                        Log.i(
+                            "TAG",
+                            "Translated Countryyyy: ${setTextViewValue(countryName, language)} "
+                        )
 
                         //binding.cityTv.text= translateText(countryName,Constants.ENGLISH,Constants.ARABIC)
                         binding.dateTv.text = getDate(currentWeather.dt)
                         binding.mainTempTv.text =
-                            tempFormat(currentWeather.temp, Changables.temperatureUnit)
+                            tempFormat(currentWeather.temp, unit,language)
                         val iconStr =
-                            Constants.ICON_URL + currentWeather.weather.get(0).icon + ".png"
-                        Glide.with(binding.mainIconIv.context)
-                            .load(iconStr)
-                            .placeholder(R.drawable.ic_launcher_background)
-                            .error(R.drawable.ic_launcher_foreground)
-                            .into(binding.mainIconIv)
+                            mapIcons(currentWeather.weather.get(0).icon)
+                        context?.let {
+                            Glide.with(it)
+                                .load(iconStr)
+                                .placeholder(R.drawable.ic_launcher_background)
+                                .error(R.drawable.ic_launcher_foreground)
+                                .into(binding.mainIconIv)
+                        }
                         binding.descriptionTv.text = currentWeather.weather.get(0).description
 
                         hourlyAdapter.submitList(result.data.hourly)
@@ -508,7 +547,8 @@ class HomeFragment : Fragment() {
                         )
                         binding.windValueTv.text = setWind(
                             currentWeather.wind_speed,
-                            Changables.windSpeedUnit,
+                            windSpeed,
+                            unit,
                             binding.windValueTv.context
                         )
                         binding.pressureValueTv.text =
@@ -516,22 +556,6 @@ class HomeFragment : Fragment() {
                         binding.cloudValueTv.text = setClouds(currentWeather.clouds)
                         binding.uvValueTv.text = currentWeather.uvi.toString()
 
-                        //viewModel.translateText(countryName)
-                        /*viewModel.translationResponse
-                            .collect { data ->
-                                when (data) {
-                                    is TranslateState.Success -> {
-                                        binding.cityTv.text = data
-                                    }
-                                    is TranslateState.Failure -> {
-                                        Toast.makeText(context, data.msg.message, Toast.LENGTH_SHORT).show()
-                                    }
-                                    is TranslateState.Loading->{
-                                        Log.i("TAG", "Loading:")
-
-                                    }
-                                }
-                            }*/
                     }
                     is ApiState.Loading -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -547,7 +571,7 @@ class HomeFragment : Fragment() {
                         binding.weatherDetailsCard.visibility = View.GONE
                         Log.i("TAG", "Failure: lat=$lat , long=$longt ${result.msg.message}")
 
-                        Toast.makeText(context, result.msg.message, Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(context, result.msg.message, Toast.LENGTH_SHORT).show()
 
                     }
                 }
